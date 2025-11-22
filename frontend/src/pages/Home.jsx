@@ -1,12 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import Cal, { getCalApi } from "@calcom/embed-react";
 import { 
   Mail, FileText, CheckCircle, Clock, DollarSign, MessageCircle, Target,
   Eye, RefreshCw, Zap, Users, Building2, Star, Check, ArrowRight, Play,
   TrendingUp, BarChart3, FileCheck, Layout, MessageSquare, Bell, ChevronDown,
   Rocket, Shield, Award, Layers, Globe, Lock, Calendar
 } from 'lucide-react';
+import StackedBannerFeatures from '../components/StackedBannerFeatures';
+
+
+
+// Cal.com Embed Component
+const CalEmbed = () => {
+  useEffect(() => {
+    (async function () {
+      const cal = await getCalApi({"namespace":"30min"});
+      cal("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
+    })();
+  }, []);
+
+  return (
+    <div className="rounded-2xl overflow-hidden border-2 border-purple-200" style={{ minHeight: '630px' }}>
+      <Cal 
+        namespace="30min"
+        calLink="deepak-yadav-04/30min"
+        style={{width:"100%",height:"630px",overflow:"scroll"}}
+        config={{"layout":"month_view"}}
+      />
+    </div>
+  );
+};
+
+
 
 export default function Home() {
   return (
@@ -231,8 +258,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trust Badges with Enhanced Design */}
-      <section className="py-16 bg-white border-y border-gray-100">
+      {/* Trust Badges with Infinite Carousel */}
+      <section className="py-16 bg-white border-y border-gray-100 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.p 
             initial={{ opacity: 0 }}
@@ -243,20 +270,51 @@ export default function Home() {
             <Shield className="w-4 h-4 mr-2" />
             Trusted by 500+ leading brands and agencies worldwide
           </motion.p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
-            {['Brand A', 'Brand B', 'Brand C', 'Brand D'].map((brand, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 0.6, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                whileHover={{ opacity: 1, scale: 1.05 }}
-                className="text-2xl font-bold text-gray-400 transition-all duration-300"
+          
+          {/* Infinite Scrolling Brands Container */}
+          <div className="relative">
+            {/* Left Fade/Cloud Effect */}
+            <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
+            
+            {/* Right Fade/Cloud Effect */}
+            <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
+            
+            {/* Scrolling Brands */}
+            <div className="flex overflow-hidden">
+              <motion.div
+                className="flex gap-16 items-center"
+                animate={{
+                  x: [0, -1400]
+                }}
+                transition={{
+                  x: {
+                    repeat: Infinity,
+                    repeatType: "loop",
+                    duration: 25,
+                    ease: "linear"
+                  }
+                }}
               >
-                {brand}
+                {/* First set of brands */}
+                {['Brand A', 'Brand B', 'Brand C', 'Brand D', 'Brand E', 'Brand F', 'Brand G'].map((brand, idx) => (
+                  <div 
+                    key={`set1-${idx}`}
+                    className="text-2xl font-bold text-gray-400 whitespace-nowrap flex-shrink-0 hover:text-purple-600 transition-colors duration-300"
+                  >
+                    {brand}
+                  </div>
+                ))}
+                {/* Duplicate set for seamless loop */}
+                {['Brand A', 'Brand B', 'Brand C', 'Brand D', 'Brand E', 'Brand F', 'Brand G'].map((brand, idx) => (
+                  <div 
+                    key={`set2-${idx}`}
+                    className="text-2xl font-bold text-gray-400 whitespace-nowrap flex-shrink-0 hover:text-purple-600 transition-colors duration-300"
+                  >
+                    {brand}
+                  </div>
+                ))}
               </motion.div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
@@ -340,335 +398,32 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Solution/Features Section - Clean Modern Design with Geometric Patterns */}
-      <section className="relative py-32 overflow-hidden bg-gray-50">
-        {/* Geometric Background Decorations */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div 
-            animate={{ rotate: 360 }}
-            transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-32 -right-32 w-96 h-96 border-[40px] border-purple-100 rounded-full opacity-50"
-          ></motion.div>
-          <motion.div 
-            animate={{ rotate: -360 }}
-            transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-32 -left-32 w-96 h-96 border-[40px] border-blue-100 rounded-full opacity-50"
-          ></motion.div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Section Header */}
+      {/* Features Section - Stacked Banner Scroll Takeover */}
+      <section className="relative bg-gradient-to-br from-purple-50 via-white to-blue-50">
+        {/* Section Intro */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-20"
+            className="text-center"
           >
-            <motion.span 
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="inline-flex items-center px-5 py-2.5 bg-emerald-500 text-white rounded-full text-sm font-bold mb-6 shadow-lg"
-            >
-              <Zap className="w-4 h-4 mr-2" />
+            <span className="inline-block px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold mb-4">
               Powerful Features
-            </motion.span>
-            <h2 className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
-              Meet Your <span className="text-purple-600">All-in-One Solution</span>
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Everything You Need in <span className="text-purple-600">One Platform</span>
             </h2>
-            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Every feature designed to eliminate friction and boost productivity
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              From interactive briefs to automated reporting, discover the complete toolkit that streamlines your creator campaigns from start to finish.
             </p>
           </motion.div>
-
-          {/* Bento Grid Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 auto-rows-fr">
-            {/* Feature 1: Interactive Brief Builder - Large Card */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4 }}
-              className="lg:col-span-4 lg:row-span-2 group relative"
-            >
-              <motion.div
-                whileHover={{ y: -8, boxShadow: "0 40px 80px -20px rgba(0, 0, 0, 0.25)" }}
-                className="h-full bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-purple-600 transition-all duration-300"
-              >
-                {/* Decorative Pattern */}
-                <div className="absolute top-0 right-0 w-64 h-64 opacity-5">
-                  <div className="absolute inset-0" style={{ 
-                    backgroundImage: 'repeating-linear-gradient(45deg, #7c3aed 0, #7c3aed 10px, transparent 10px, transparent 20px)',
-                  }}></div>
-                </div>
-
-                <div className="relative h-full p-10 flex flex-col justify-between">
-                  <div>
-                    {/* Icon */}
-                    <motion.div 
-                      whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
-                      transition={{ duration: 0.5 }}
-                      className="inline-flex items-center justify-center w-20 h-20 bg-purple-600 rounded-2xl mb-6 shadow-lg"
-                    >
-                      <Layout className="w-10 h-10 text-white" />
-                    </motion.div>
-                    
-                    {/* Badge */}
-                    <div className="inline-block px-3 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full mb-4 uppercase tracking-wider">
-                      Core Feature
-                    </div>
-
-                    <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                      Interactive Brief Builder
-                    </h3>
-                    
-                    <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                      Create beautiful, structured briefs with templates. Track who opened and acknowledged them. No more 'I didn't see the brief' excuses.
-                    </p>
-                  </div>
-
-                  {/* Feature Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {[
-                      'Pre-built templates for every content type',
-                      'Time-stamped acknowledgment tracking',
-                      'Visual asset uploads & guidelines',
-                      'Compliance-ready documentation'
-                    ].map((feature, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: idx * 0.1 }}
-                        whileHover={{ x: 4 }}
-                        className="flex items-start space-x-3 bg-purple-50 rounded-xl p-4 border-2 border-purple-200"
-                      >
-                        <CheckCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-gray-700 font-medium">{feature}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Geometric Accent */}
-                <div className="absolute -bottom-2 -right-2 w-32 h-32 bg-purple-600 rounded-tl-[80px] opacity-10"></div>
-              </motion.div>
-            </motion.div>
-
-            {/* Feature 2: Content Review & Approval - Tall Card */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-              className="lg:col-span-2 lg:row-span-2 group relative"
-            >
-              <motion.div
-                whileHover={{ y: -8, boxShadow: "0 40px 80px -20px rgba(0, 0, 0, 0.25)" }}
-                className="h-full bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-cyan-500 transition-all duration-300"
-              >
-                {/* Dot Pattern */}
-                <div className="absolute inset-0 opacity-5" style={{ 
-                  backgroundImage: 'radial-gradient(circle, #06b6d4 1px, transparent 1px)',
-                  backgroundSize: '24px 24px'
-                }}></div>
-
-                <div className="relative h-full p-8 flex flex-col">
-                  {/* Icon */}
-                  <motion.div 
-                    whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
-                    transition={{ duration: 0.5 }}
-                    className="inline-flex items-center justify-center w-16 h-16 bg-cyan-500 rounded-2xl mb-6 shadow-lg"
-                  >
-                    <Eye className="w-8 h-8 text-white" />
-                  </motion.div>
-
-                  {/* Badge */}
-                  <div className="inline-block px-3 py-1 bg-cyan-100 text-cyan-700 text-xs font-bold rounded-full mb-4 uppercase tracking-wider w-fit">
-                    Collaboration
-                  </div>
-                  
-                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-                    Content Review & Approval
-                  </h3>
-                  
-                  <p className="text-gray-600 mb-6 leading-relaxed flex-grow">
-                    Review drafts with timestamp comments. Request revisions with clear feedback. Track every version in one place.
-                  </p>
-
-                  {/* Feature List */}
-                  <div className="space-y-3">
-                    {[
-                      'In-line video commenting',
-                      'Version history & comparison',
-                      'Team collaboration notes',
-                      'Legal compliance checks'
-                    ].map((feature, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: idx * 0.1 }}
-                        whileHover={{ x: 4 }}
-                        className="flex items-center space-x-3 text-gray-700 bg-cyan-50 rounded-lg p-3 border-l-4 border-cyan-500"
-                      >
-                        <div className="w-2 h-2 rounded-full bg-cyan-500"></div>
-                        <span className="text-sm font-medium">{feature}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Corner Accent */}
-                <div className="absolute top-0 right-0 w-20 h-20 bg-cyan-500 opacity-10" style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)' }}></div>
-              </motion.div>
-            </motion.div>
-
-            {/* Feature 3: Deliverable Tracking - Wide Card */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-              className="lg:col-span-3 group relative"
-            >
-              <motion.div
-                whileHover={{ y: -8, boxShadow: "0 40px 80px -20px rgba(0, 0, 0, 0.25)" }}
-                className="h-full bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-emerald-500 transition-all duration-300"
-              >
-                {/* Striped Pattern */}
-                <div className="absolute inset-0 opacity-5" style={{ 
-                  backgroundImage: 'repeating-linear-gradient(45deg, #10b981, #10b981 10px, transparent 10px, transparent 20px)'
-                }}></div>
-
-                <div className="relative h-full p-8 flex items-center">
-                  <div className="flex-grow">
-                    {/* Icon */}
-                    <motion.div 
-                      whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
-                      transition={{ duration: 0.5 }}
-                      className="inline-flex items-center justify-center w-16 h-16 bg-emerald-500 rounded-2xl mb-4 shadow-lg"
-                    >
-                      <Clock className="w-8 h-8 text-white" />
-                    </motion.div>
-
-                    {/* Badge */}
-                    <div className="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full mb-4 uppercase tracking-wider">
-                      Automation
-                    </div>
-                    
-                    <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-                      Deliverable Tracking
-                    </h3>
-                    
-                    <p className="text-gray-600 mb-4 leading-relaxed">
-                      See campaign progress at a glance. Automated reminders for deadlines. Never miss a post again.
-                    </p>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        'Real-time status dashboard',
-                        'Automated deadline alerts',
-                        'Post verification system',
-                        'Performance metrics logging'
-                      ].map((feature, idx) => (
-                        <motion.span
-                          key={idx}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: idx * 0.1 }}
-                          whileHover={{ scale: 1.05, y: -2 }}
-                          className="inline-flex items-center px-4 py-2 bg-emerald-500 text-white rounded-full text-xs font-bold shadow-md"
-                        >
-                          {feature}
-                        </motion.span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Geometric Decoration */}
-                <div className="absolute -top-4 -left-4 w-24 h-24 border-8 border-emerald-500 rounded-full opacity-20"></div>
-              </motion.div>
-            </motion.div>
-
-            {/* Feature 4: One-Click Reporting - Wide Card */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              className="lg:col-span-3 group relative"
-            >
-              <motion.div
-                whileHover={{ y: -8, boxShadow: "0 40px 80px -20px rgba(0, 0, 0, 0.25)" }}
-                className="h-full bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-orange-500 transition-all duration-300"
-              >
-                {/* Grid Pattern */}
-                <div className="absolute inset-0 opacity-5" style={{ 
-                  backgroundImage: 'linear-gradient(#f97316 1px, transparent 1px), linear-gradient(90deg, #f97316 1px, transparent 1px)',
-                  backgroundSize: '24px 24px'
-                }}></div>
-
-                <div className="relative h-full p-8 flex items-center">
-                  <div className="flex-grow">
-                    {/* Icon */}
-                    <motion.div 
-                      whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
-                      transition={{ duration: 0.5 }}
-                      className="inline-flex items-center justify-center w-16 h-16 bg-orange-500 rounded-2xl mb-4 shadow-lg"
-                    >
-                      <FileCheck className="w-8 h-8 text-white" />
-                    </motion.div>
-
-                    {/* Badge */}
-                    <div className="inline-block px-3 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-full mb-4 uppercase tracking-wider">
-                      Reporting
-                    </div>
-                    
-                    <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-                      One-Click Reporting
-                    </h3>
-                    
-                    <p className="text-gray-600 mb-4 leading-relaxed">
-                      Generate professional campaign reports instantly. Export as PDF or share via link. Save hours of manual work.
-                    </p>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        'Automated report generation',
-                        'Customizable templates',
-                        'Client portal access',
-                        'Export in multiple formats'
-                      ].map((feature, idx) => (
-                        <motion.span
-                          key={idx}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: idx * 0.1 }}
-                          whileHover={{ scale: 1.05, y: -2 }}
-                          className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-full text-xs font-bold shadow-md"
-                        >
-                          {feature}
-                        </motion.span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Square Accent */}
-                <div className="absolute bottom-0 -right-4 w-24 h-24 bg-orange-500 opacity-10 rotate-45"></div>
-              </motion.div>
-            </motion.div>
-          </div>
         </div>
+
+        {/* Stacked Banner Features Component */}
+        <StackedBannerFeatures />
       </section>
+
 
       {/* For Who Section - Enhanced */}
       <section className="py-24 bg-gradient-to-b from-purple-50 to-white">
@@ -716,62 +471,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Pricing Teaser - Enhanced */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <span className="inline-block px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold mb-4">
-              Pricing Plans
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Simple, <span className="text-purple-600">Transparent</span> Pricing
-            </h2>
-            <p className="text-xl text-gray-600">Choose the plan that fits your needs. Start free, scale as you grow.</p>
-          </motion.div>
+      {/* Testimonials Section - New! */}
+      <TestimonialsSection />
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <PricingCard 
-              tier="Starter"
-              price="29"
-              description="Perfect for small brands"
-              features={['5 Active Campaigns', '10 Creators Included', 'Basic Reports', 'Email Support']}
-              delay={0}
-            />
-            <PricingCard 
-              tier="Growth"
-              price="99"
-              description="For scaling brands & agencies"
-              features={['Unlimited Campaigns', '40 Creators Included', 'Advanced Workflows', 'Team Access (3)']}
-              featured={true}
-              delay={0.1}
-            />
-            <PricingCard 
-              tier="Agency Pro"
-              price="199"
-              description="For large agencies"
-              features={['Everything in Growth', '100 Creators Included', 'White-label Reports', 'Team Access (10)']}
-              delay={0.2}
-            />
-          </div>
-
-          <motion.div 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mt-12"
-          >
-            <Link to="/pricing" className="text-purple-600 hover:text-purple-700 font-semibold text-lg inline-flex items-center group">
-              View detailed pricing
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
+      {/* Pricing Teaser - Enhanced with Monthly/Annual Toggle */}
+      <PricingSection />
 
       {/* Schedule a Call with Founder Section */}
       <section className="relative py-32 overflow-hidden bg-white">
@@ -943,51 +647,13 @@ export default function Home() {
                   </p>
                 </div>
 
-                {/* Calendly Embed Area */}
+                {/* Cal.com Embed Area */}
                 <div className="p-8">
-                  {/* Placeholder for Calendly - You'll need to replace the URL with your actual Calendly link */}
-                  <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-12 text-center border-2 border-purple-200 mb-6">
-                    <motion.div
-                      animate={{ scale: [1, 1.05, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg"
-                    >
-                      <Calendar className="w-10 h-10 text-white" />
-                    </motion.div>
-                    
-                    <h4 className="text-2xl font-bold text-gray-900 mb-4">
-                      Ready to Transform Your Campaigns?
-                    </h4>
-                    
-                    <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                      Click below to access our Calendly scheduling page and pick a time that works best for you
-                    </p>
-
-                    {/* Calendly CTA Button */}
-                    <motion.a
-                      href="https://calendly.com/your-calendly-link" // Replace with your actual Calendly link
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="inline-flex items-center gap-3 bg-purple-600 text-white font-bold py-5 px-10 rounded-xl shadow-2xl hover:bg-purple-700 transition-all duration-300"
-                    >
-                      <Calendar className="w-6 h-6" />
-                      Schedule Your Call Now
-                      <ArrowRight className="w-5 h-5" />
-                    </motion.a>
-
-                    {/* Alternative: Uncomment below to use inline Calendly embed instead */}
-                    {/* 
-                    <div className="calendly-inline-widget" 
-                      data-url="https://calendly.com/your-calendly-link?hide_event_type_details=1&hide_gdpr_banner=1"
-                      style={{ minWidth: '320px', height: '630px' }}
-                    ></div>
-                    */}
-                  </div>
+                  {/* Cal.com Inline Embed */}
+                  <CalEmbed />
 
                   {/* Trust Indicators */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                     <div className="flex items-center gap-3 bg-purple-50 p-4 rounded-xl border-2 border-purple-200">
                       <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
                         <Shield className="w-6 h-6 text-white" />
@@ -1007,49 +673,11 @@ export default function Home() {
                         <p className="text-xs text-gray-600">Choose your time</p>
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-3 bg-cyan-50 p-4 rounded-xl border-2 border-cyan-200">
-                      <div className="w-10 h-10 bg-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Star className="w-6 h-6 text-white" fill="white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">4.9/5 Rating</p>
-                        <p className="text-xs text-gray-600">200+ calls</p>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </motion.div>
 
-              {/* Social Proof */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="mt-6 bg-gray-50 rounded-2xl p-6 border-2 border-gray-200"
-              >
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="flex -space-x-3">
-                    {[...Array(4)].map((_, idx) => (
-                      <div key={idx} className="w-10 h-10 bg-purple-600 rounded-full border-2 border-white flex items-center justify-center">
-                        <Star className="w-5 h-5 text-white" fill="white" />
-                      </div>
-                    ))}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-gray-900">200+ calls this month</p>
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, idx) => (
-                        <Star key={idx} className="w-4 h-4 text-yellow-400" fill="#FBBF24" />
-                      ))}
-                      <span className="text-xs text-gray-600 ml-1">4.9/5 rating</span>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-600 italic">
-                  "The founder call was incredibly valuable. Got personalized strategies that increased our campaign ROI by 3x!"
-                </p>
-              </motion.div>
+
             </motion.div>
           </div>
         </div>
@@ -1290,8 +918,424 @@ function SolutionCard({ icon, title, description, features, color, delay }) {
   );
 }
 
-// Pricing Card Component - Enhanced
-function PricingCard({ tier, price, description, features, featured, delay }) {
+// Testimonials Section Component - Infinite Scrolling Columns
+function TestimonialsSection() {
+  const testimonials = [
+    {
+      name: "Sarah Johnson",
+      role: "Marketing Director",
+      company: "TechBrand Inc.",
+      image: "SJ",
+      rating: 5,
+      content: "Simplexus transformed how we manage creator campaigns. What used to take days now takes hours. The ROI tracking alone has been worth it!"
+    },
+    {
+      name: "Michael Chen",
+      role: "Agency Owner",
+      company: "Creative Pulse",
+      image: "MC",
+      rating: 5,
+      content: "Managing 50+ creators across multiple brands was chaos before Simplexus. Now everything is organized, automated, and our clients love the reports."
+    },
+    {
+      name: "Emily Rodriguez",
+      role: "Brand Manager",
+      company: "FashionCo",
+      image: "ER",
+      rating: 5,
+      content: "The brief builder and approval workflow saved us countless hours. Creators actually acknowledge reading briefs now - game changer!"
+    },
+    {
+      name: "David Kim",
+      role: "Campaign Manager",
+      company: "GrowthLabs",
+      image: "DK",
+      rating: 5,
+      content: "Best investment we've made this year. The payment tracking linked to deliverables eliminated all confusion and disputes."
+    },
+    {
+      name: "Lisa Anderson",
+      role: "Social Media Lead",
+      company: "BeautyBrand",
+      image: "LA",
+      rating: 5,
+      content: "I was skeptical at first, but the one-click reporting feature alone pays for itself. Our team efficiency increased by 300%!"
+    },
+    {
+      name: "James Wilson",
+      role: "Creative Director",
+      company: "Digital Wave",
+      image: "JW",
+      rating: 5,
+      content: "Finally, a platform built by someone who understands the pain points. The version control for content approvals is brilliant."
+    },
+    {
+      name: "Amanda Torres",
+      role: "Growth Marketing Manager",
+      company: "StartupXYZ",
+      image: "AT",
+      rating: 5,
+      content: "The automated reminders and deadline tracking mean I never miss a deliverable. It's like having an assistant dedicated to campaign management!"
+    },
+    {
+      name: "Robert Martinez",
+      role: "Brand Partnerships Lead",
+      company: "MediaCorp",
+      image: "RM",
+      rating: 5,
+      content: "We've scaled from 10 to 200 creator partnerships without adding headcount. Simplexus handles the complexity so we can focus on relationships."
+    },
+    {
+      name: "Jennifer Lee",
+      role: "VP of Marketing",
+      company: "E-commerce Plus",
+      image: "JL",
+      rating: 5,
+      content: "The ROI dashboard gives us real-time insights that we share in board meetings. Finally, data-driven creator marketing is possible!"
+    }
+  ];
+
+  // Split testimonials into 3 columns
+  const column1 = testimonials.slice(0, 3);
+  const column2 = testimonials.slice(3, 6);
+  const column3 = testimonials.slice(6, 9);
+
+  // Testimonial Card Component
+  const TestimonialCard = ({ testimonial }) => (
+    <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6 flex-shrink-0">
+      {/* Rating Stars */}
+      <div className="flex items-center gap-1 mb-4">
+        {[...Array(testimonial.rating)].map((_, i) => (
+          <Star key={i} className="w-4 h-4 text-yellow-400" fill="#FBBF24" />
+        ))}
+      </div>
+
+      {/* Testimonial Content */}
+      <p className="text-gray-700 mb-6 leading-relaxed italic text-sm">
+        "{testimonial.content}"
+      </p>
+
+      {/* Author Info */}
+      <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+          {testimonial.image}
+        </div>
+        <div>
+          <div className="font-bold text-gray-900 text-sm">{testimonial.name}</div>
+          <div className="text-xs text-gray-600">{testimonial.role}</div>
+          <div className="text-xs text-purple-600 font-semibold">{testimonial.company}</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <section className="py-24 bg-gradient-to-b from-white to-purple-50 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="inline-block px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-4">
+            Testimonials
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Loved by <span className="text-purple-600">10,000+</span> Users
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            See what brands, agencies, and creators are saying about Simplexus
+          </p>
+        </motion.div>
+
+        {/* Infinite Scrolling Testimonials Columns */}
+        <div className="relative h-[600px]">
+          {/* Top Fade Effect */}
+          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-purple-50 via-purple-50/80 to-transparent z-10 pointer-events-none"></div>
+          
+          {/* Bottom Fade Effect */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-purple-50 via-purple-50/80 to-transparent z-10 pointer-events-none"></div>
+
+          {/* Three Columns with Opposite Scrolling */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+            {/* Column 1 - Scrolls Down */}
+            <div className="overflow-hidden relative">
+              <motion.div
+                animate={{
+                  y: [0, -1200]
+                }}
+                transition={{
+                  y: {
+                    repeat: Infinity,
+                    repeatType: "loop",
+                    duration: 30,
+                    ease: "linear"
+                  }
+                }}
+              >
+                {/* First set */}
+                {column1.map((testimonial, idx) => (
+                  <TestimonialCard key={`col1-set1-${idx}`} testimonial={testimonial} />
+                ))}
+                {/* Duplicate for seamless loop */}
+                {column1.map((testimonial, idx) => (
+                  <TestimonialCard key={`col1-set2-${idx}`} testimonial={testimonial} />
+                ))}
+              </motion.div>
+            </div>
+
+            {/* Column 2 - Scrolls Up (opposite direction) */}
+            <div className="overflow-hidden relative hidden md:block">
+              <motion.div
+                animate={{
+                  y: [-1200, 0]
+                }}
+                transition={{
+                  y: {
+                    repeat: Infinity,
+                    repeatType: "loop",
+                    duration: 30,
+                    ease: "linear"
+                  }
+                }}
+              >
+                {/* First set */}
+                {column2.map((testimonial, idx) => (
+                  <TestimonialCard key={`col2-set1-${idx}`} testimonial={testimonial} />
+                ))}
+                {/* Duplicate for seamless loop */}
+                {column2.map((testimonial, idx) => (
+                  <TestimonialCard key={`col2-set2-${idx}`} testimonial={testimonial} />
+                ))}
+              </motion.div>
+            </div>
+
+            {/* Column 3 - Scrolls Down (same as column 1) */}
+            <div className="overflow-hidden relative hidden md:block">
+              <motion.div
+                animate={{
+                  y: [0, -1200]
+                }}
+                transition={{
+                  y: {
+                    repeat: Infinity,
+                    repeatType: "loop",
+                    duration: 30,
+                    ease: "linear"
+                  }
+                }}
+              >
+                {/* First set */}
+                {column3.map((testimonial, idx) => (
+                  <TestimonialCard key={`col3-set1-${idx}`} testimonial={testimonial} />
+                ))}
+                {/* Duplicate for seamless loop */}
+                {column3.map((testimonial, idx) => (
+                  <TestimonialCard key={`col3-set2-${idx}`} testimonial={testimonial} />
+                ))}
+              </motion.div>
+            </div>
+          </div>
+        </div>
+
+        {/* Trust Badge */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="mt-16 text-center"
+        >
+          <div className="inline-flex items-center gap-3 bg-white px-8 py-4 rounded-full shadow-lg border-2 border-purple-200">
+            <div className="flex -space-x-2">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="w-10 h-10 bg-purple-600 rounded-full border-2 border-white flex items-center justify-center">
+                  <Star className="w-5 h-5 text-white" fill="white" />
+                </div>
+              ))}
+            </div>
+            <div className="text-left">
+              <div className="flex items-center gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 text-yellow-400" fill="#FBBF24" />
+                ))}
+              </div>
+              <p className="text-sm text-gray-600">
+                <span className="font-bold text-gray-900">4.9/5</span> from 2,500+ reviews
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// Pricing Section Component with User Type and Billing Period Toggles
+function PricingSection() {
+  const [billingPeriod, setBillingPeriod] = React.useState('monthly');
+  const [userType, setUserType] = React.useState('brand'); // 'brand' or 'creator'
+  
+  const brandPricingPlans = [
+    {
+      tier: "Starter",
+      monthlyPrice: 29,
+      annualPrice: 290, // ~17% discount (vs $348 if paid monthly)
+      description: "Perfect for small brands",
+      features: ['5 Active Campaigns', '10 Creators Included', 'Basic Reports', 'Email Support']
+    },
+    {
+      tier: "Growth",
+      monthlyPrice: 99,
+      annualPrice: 950, // ~20% discount (vs $1,188 if paid monthly)
+      description: "For scaling brands & agencies",
+      features: ['Unlimited Campaigns', '40 Creators Included', 'Advanced Workflows', 'Team Access (3)'],
+      featured: true
+    },
+    {
+      tier: "Agency Pro",
+      monthlyPrice: 199,
+      annualPrice: 1910, // ~20% discount (vs $2,388 if paid monthly)
+      description: "For large agencies",
+      features: ['Everything in Growth', '100 Creators Included', 'White-label Reports', 'Team Access (10)']
+    }
+  ];
+
+  const creatorPricingPlans = [
+    {
+      tier: "Free",
+      monthlyPrice: 0,
+      annualPrice: 0,
+      description: "Start your journey",
+      features: ['Receive campaign briefs', 'Submit content for review', 'Track your deliverables', 'Basic portfolio']
+    },
+    {
+      tier: "Pro Creator",
+      monthlyPrice: 15,
+      annualPrice: 144, // 20% discount (vs $180 if paid monthly)
+      description: "For serious creators",
+      features: ['Everything in Free', 'Premium portfolio page', 'Analytics dashboard', 'Priority support'],
+      featured: true
+    },
+    {
+      tier: "Creator Studio",
+      monthlyPrice: 29,
+      annualPrice: 280, // ~20% discount (vs $348 if paid monthly)
+      description: "For creator agencies",
+      features: ['Everything in Pro', 'Team collaboration', 'Advanced analytics', 'API access']
+    }
+  ];
+
+  const activePlans = userType === 'brand' ? brandPricingPlans : creatorPricingPlans;
+
+  return (
+    <section className="py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="inline-block px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold mb-4">
+            Pricing Plans
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Simple, <span className="text-purple-600">Transparent</span> Pricing
+          </h2>
+          <p className="text-xl text-gray-600 mb-8">Choose the plan that fits your needs. Start free, scale as you grow.</p>
+          
+          {/* User Type Toggle */}
+          <div className="inline-flex items-center gap-4 bg-gray-100 p-2 rounded-2xl mb-6">
+            <button
+              onClick={() => setUserType('brand')}
+              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                userType === 'brand'
+                  ? 'bg-white text-purple-600 shadow-lg'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Building2 className="w-4 h-4 inline-block mr-2" />
+              Brand/Agency
+            </button>
+            <button
+              onClick={() => setUserType('creator')}
+              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                userType === 'creator'
+                  ? 'bg-white text-purple-600 shadow-lg'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Star className="w-4 h-4 inline-block mr-2" />
+              Creator
+            </button>
+          </div>
+
+          {/* Billing Period Toggle */}
+          <div className="inline-flex items-center gap-4 bg-gray-100 p-2 rounded-2xl">
+            <button
+              onClick={() => setBillingPeriod('monthly')}
+              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                billingPeriod === 'monthly'
+                  ? 'bg-white text-purple-600 shadow-lg'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingPeriod('annual')}
+              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 relative ${
+                billingPeriod === 'annual'
+                  ? 'bg-white text-purple-600 shadow-lg'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Annual
+              <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                Save 20%
+              </span>
+            </button>
+          </div>
+        </motion.div>
+
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {activePlans.map((plan, idx) => (
+            <PricingCard
+              key={idx}
+              tier={plan.tier}
+              monthlyPrice={plan.monthlyPrice}
+              annualPrice={plan.annualPrice}
+              billingPeriod={billingPeriod}
+              description={plan.description}
+              features={plan.features}
+              featured={plan.featured}
+              delay={idx * 0.1}
+            />
+          ))}
+        </div>
+
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-center mt-12"
+        >
+          <Link to="/pricing" className="text-purple-600 hover:text-purple-700 font-semibold text-lg inline-flex items-center group">
+            View detailed pricing
+            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// Pricing Card Component - Enhanced with Annual Pricing
+function PricingCard({ tier, monthlyPrice, annualPrice, billingPeriod, description, features, featured, delay }) {
+  const isAnnual = billingPeriod === 'annual';
+  const displayPrice = isAnnual ? annualPrice : monthlyPrice;
+  
   return (
     <motion.div 
       initial={{ opacity: 0, y: 30 }}
@@ -1314,10 +1358,33 @@ function PricingCard({ tier, price, description, features, featured, delay }) {
       <div className="text-center">
         <h3 className={`text-2xl font-bold mb-2 ${featured ? 'text-white' : 'text-gray-900'}`}>{tier}</h3>
         <p className={`mb-8 ${featured ? 'text-purple-100' : 'text-gray-600'}`}>{description}</p>
+        
         <div className="mb-8">
-          <span className={`text-6xl font-bold ${featured ? 'text-white' : 'text-gray-900'}`}>${price}</span>
-          <span className={`text-lg ${featured ? 'text-purple-100' : 'text-gray-600'}`}>/month</span>
+          {isAnnual && monthlyPrice > 0 && (
+            <div className="mb-2">
+              <span className={`text-xl font-bold line-through ${featured ? 'text-purple-200' : 'text-gray-400'}`}>
+                ${monthlyPrice * 12}
+              </span>
+              <span className={`text-sm ml-1 ${featured ? 'text-purple-200' : 'text-gray-400'}`}>/year</span>
+            </div>
+          )}
+          <div>
+            <span className={`text-6xl font-bold ${featured ? 'text-white' : 'text-gray-900'}`}>
+              ${displayPrice}
+            </span>
+            <span className={`text-lg ${featured ? 'text-purple-100' : 'text-gray-600'}`}>
+              {isAnnual ? '/year' : '/month'}
+            </span>
+          </div>
+          {isAnnual && monthlyPrice > 0 && (
+            <div className="mt-2">
+              <span className={`text-sm font-semibold ${featured ? 'text-purple-100' : 'text-green-600'}`}>
+                ${Math.round(displayPrice / 12)}/month when billed annually
+              </span>
+            </div>
+          )}
         </div>
+        
         <ul className="space-y-4 mb-10">
           {features.map((feature, idx) => (
             <li key={idx} className={`flex items-center text-left ${featured ? 'text-white' : 'text-gray-700'}`}>
