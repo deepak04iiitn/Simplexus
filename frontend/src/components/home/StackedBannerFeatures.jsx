@@ -2,49 +2,49 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Layout, Eye, Clock, FileCheck, DollarSign, Users, 
-  ArrowRight, X
+  ArrowRight, X, Layers, LayoutGrid
 } from 'lucide-react';
 
 const FEATURES_DATA = [
   {
     badge: "Core Feature",
     title: "Interactive Brief Builder",
-    description: "Create beautiful, structured briefs with templates. Track who opened and acknowledged them. No more 'I didn't see the brief' excuses.",
+    description: "Create beautifully designed campaign briefs with customizable templates. Track real-time engagement showing who opened and acknowledged them. Built-in version control keeps everyone aligned on the latest requirements, while read receipts eliminate the 'I didn't see it' excuse.",
     ctaText: "Explore Briefs",
     icon: <Layout className="w-7 h-7 text-white" />
   },
   {
     badge: "Collaboration",
     title: "Content Review & Approval",
-    description: "Review drafts with timestamp comments. Request revisions with clear feedback. Track every version in one place.",
+    description: "Review creator submissions with time-stamped comments and visual annotations. Compare versions side-by-side and maintain a complete audit trail of changes. Clear, actionable feedback reduces revision cycles by 40% while keeping all stakeholders aligned.",
     ctaText: "See Reviews",
     icon: <Eye className="w-7 h-7 text-white" />
   },
   {
     badge: "Automation",
     title: "Deliverable Tracking",
-    description: "See campaign progress at a glance. Automated reminders for deadlines. Never miss a post again.",
+    description: "Visualize campaign progress through intuitive dashboards showing what's submitted, pending, or approved at a glance. Automated smart reminders notify creators before deadlines with escalation workflows. Reduce campaign management time by 60% while ensuring zero missed deliverables.",
     ctaText: "Track Progress",
     icon: <Clock className="w-7 h-7 text-white" />
   },
   {
     badge: "Reporting",
     title: "One-Click Reporting",
-    description: "Generate professional campaign reports instantly. Export as PDF or share via link. Save hours of manual work.",
+    description: "Generate comprehensive campaign reports with all URLs, screenshots, and performance metrics in one click. Customize templates for different stakeholders and export as professional PDFs or shareable links. Automatically pull live data from social platforms, saving 10+ hours per report.",
     ctaText: "View Reports",
     icon: <FileCheck className="w-7 h-7 text-white" />
   },
   {
     badge: "Financial",
     title: "Payment Management",
-    description: "Link payments to deliverables. Track what's paid and what's pending. Automate creator payments with confidence.",
+    description: "Link payments directly to deliverables with conditional release workflows—pay only when content is approved and published. Track payment status across all creators with built-in invoice management. Automate processing and maintain complete financial transparency with audit logs.",
     ctaText: "Manage Payments",
     icon: <DollarSign className="w-7 h-7 text-white" />
   },
   {
     badge: "Teamwork",
     title: "Team Collaboration",
-    description: "Invite team members, assign roles, and collaborate seamlessly. Everyone stays in sync with real-time updates.",
+    description: "Invite unlimited team members with granular role-based permissions—give clients view-only access while your team manages campaigns. Collaborate in real-time with activity feeds showing who did what and when. Assign tasks, leave internal notes, and mention teammates for instant notifications.",
     ctaText: "Add Team",
     icon: <Users className="w-7 h-7 text-white" />
   }
@@ -53,6 +53,11 @@ const FEATURES_DATA = [
 const StackedBannerFeatures = () => {
   const [currentIndex, setCurrentIndex] = useState(-1); // Start at -1 so first banner slides up
   const [isLocked, setIsLocked] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false); // New state for expanded view
+  const [showTooltip, setShowTooltip] = useState(false); // State for tooltip visibility
+  const [tooltipDismissed, setTooltipDismissed] = useState(false); // Track if user dismissed tooltip
+  const [hasEnteredSection, setHasEnteredSection] = useState(false); // Track if user entered section
+  const [inViewport, setInViewport] = useState(false); // Track if section is in viewport
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const sectionRef = useRef(null);
   const isTransitioningRef = useRef(false);
@@ -69,21 +74,37 @@ const StackedBannerFeatures = () => {
     return () => motionQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // Intersection Observer for scroll lock activation
+  // Intersection Observer for scroll lock activation and tooltip
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          setInViewport(true);
           setIsLocked(true);
           document.body.style.overflow = 'hidden';
           // Trigger first banner entrance if not already started
           if (currentIndex === -1) {
             setCurrentIndex(0);
           }
-        } else if (!entry.isIntersecting && currentIndex <= 0) {
-          setIsLocked(false);
-          document.body.style.overflow = '';
-          setCurrentIndex(-1); // Reset when scrolling back up out of view
+          // Show tooltip on first entry if not dismissed
+          if (!hasEnteredSection && !tooltipDismissed) {
+            setHasEnteredSection(true);
+            // Delay tooltip appearance slightly for better UX
+            setTimeout(() => {
+              setShowTooltip(true);
+            }, 800);
+          }
+        } else {
+          setInViewport(false);
+          if (currentIndex <= 0) {
+            setIsLocked(false);
+            document.body.style.overflow = '';
+            setCurrentIndex(-1); // Reset when scrolling back up out of view
+          } else {
+            // Scrolled past the section going down
+            setIsLocked(false);
+            document.body.style.overflow = '';
+          }
         }
       },
       { threshold: 0.6 } // Increased threshold for better lock timing
@@ -97,7 +118,7 @@ const StackedBannerFeatures = () => {
       observer.disconnect();
       document.body.style.overflow = '';
     };
-  }, [currentIndex]);
+  }, [currentIndex, hasEnteredSection, tooltipDismissed]);
 
   // Navigate to next/previous banner
   const navigate = (direction) => {
@@ -219,6 +240,16 @@ const StackedBannerFeatures = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isLocked, currentIndex]);
 
+  // Toggle expanded view
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded);
+    // When expanding, release scroll lock
+    if (!isExpanded) {
+      setIsLocked(false);
+      document.body.style.overflow = '';
+    }
+  };
+
   return (
     <section
       ref={sectionRef}
@@ -235,9 +266,58 @@ const StackedBannerFeatures = () => {
         Feature {currentIndex + 1} of {FEATURES_DATA.length}: {FEATURES_DATA[currentIndex]?.title}
       </div>
 
-      {/* Stacked Banners Container */}
-      <div className="relative w-full max-w-[95%] lg:max-w-7xl mx-auto h-[85vh] min-h-[800px] flex items-center justify-center">
-        <div className="relative w-full h-full">
+      {/* Floating Expand/Collapse Button - Shown when in features section */}
+      <AnimatePresence>
+        {inViewport && currentIndex >= 0 && !isExpanded && (
+          <motion.button
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            whileHover={{ scale: 1.1, boxShadow: "0 20px 40px -10px rgba(99, 102, 241, 0.4)" }}
+            whileTap={{ scale: 0.95 }}
+            onClick={toggleExpanded}
+            className="fixed bottom-8 right-8 z-[100] w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-full shadow-2xl shadow-indigo-500/40 flex items-center justify-center border-4 border-white hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 group"
+            aria-label="Expand all features"
+          >
+            <LayoutGrid className="w-7 h-7 group-hover:rotate-180 transition-transform duration-500" />
+            
+            {/* Auto-show Tooltip with Dismiss */}
+            <AnimatePresence>
+              {showTooltip && !tooltipDismissed && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute -top-16 right-0 bg-gray-900 text-white px-4 py-3 rounded-lg text-sm font-medium whitespace-nowrap shadow-xl flex items-center gap-3"
+                >
+                  <span>View All Features</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowTooltip(false);
+                      setTooltipDismissed(true);
+                    }}
+                    className="hover:bg-white/20 rounded p-0.5 transition-colors"
+                    aria-label="Dismiss tooltip"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            
+            {/* Hover Tooltip (only shows when auto-tooltip is dismissed) */}
+            <span className="absolute -top-12 right-0 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap shadow-xl" style={{ display: tooltipDismissed ? 'block' : 'none' }}>
+              View All Features
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Stacked Banners Container or Expanded Grid */}
+      {!isExpanded ? (
+        <div className="relative w-full max-w-full lg:max-w-[1400px] mx-auto h-[85vh] min-h-[800px] flex items-center justify-center px-4">
+          <div className="relative w-full h-full">
           {FEATURES_DATA.map((feature, index) => {
             const isCurrent = index === currentIndex;
             const isPast = index < currentIndex;
@@ -270,7 +350,7 @@ const StackedBannerFeatures = () => {
                 }}
               >
                 <div
-                  className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-100 h-[calc(100%-240px)] flex flex-col justify-center relative overflow-hidden"
+                  className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-100 h-[calc(100%-160px)] flex flex-col justify-center relative"
                   style={{
                     boxShadow: '0 -10px 40px -10px rgba(0,0,0,0.1)' // Shadow pointing up to show separation
                   }}
@@ -337,8 +417,99 @@ const StackedBannerFeatures = () => {
               </motion.div>
             );
           })}
+          </div>
         </div>
-      </div>
+      ) : (
+        /* Expanded Vertical Layout */
+        <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Close/Collapse Button */}
+          <div className="flex justify-end mb-8">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={toggleExpanded}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
+              aria-label="Collapse features"
+            >
+              <Layers className="w-5 h-5" />
+              Return to Stack View
+            </motion.button>
+          </div>
+
+          {/* Expanded Cards Grid */}
+          <div className="space-y-8">
+            {FEATURES_DATA.map((feature, index) => (
+              <motion.div
+                key={`expanded-${index}`}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.5,
+                  delay: index * 0.1,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
+                className="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 hover:shadow-2xl transition-shadow duration-300"
+              >
+                <div className="grid lg:grid-cols-2 gap-12 items-center">
+                  <div>
+                    {/* Icon */}
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl mb-8 shadow-lg shadow-indigo-500/30">
+                      {feature.icon}
+                    </div>
+
+                    {/* Badge */}
+                    <div className="block mb-6">
+                      <span className="inline-block px-4 py-2 bg-indigo-50 text-indigo-700 text-sm font-bold rounded-full uppercase tracking-wider">
+                        {feature.badge}
+                      </span>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">
+                      {feature.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-lg text-gray-600 mb-10 leading-relaxed max-w-xl">
+                      {feature.description}
+                    </p>
+
+                    {/* CTA Button */}
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="inline-flex items-center px-8 py-4 bg-indigo-600 text-white text-lg font-semibold rounded-xl shadow-xl shadow-indigo-500/30 hover:bg-indigo-700 transition-colors duration-200"
+                    >
+                      {feature.ctaText}
+                      <ArrowRight className="ml-2 w-6 h-6" />
+                    </motion.button>
+                  </div>
+
+                  {/* Right Side - Visual */}
+                  <div className="hidden lg:flex items-center justify-center relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 to-white rounded-3xl transform rotate-3 opacity-50"></div>
+                    <div className="relative w-full aspect-square max-w-md bg-gradient-to-br from-indigo-100 to-white rounded-3xl border border-indigo-50 flex items-center justify-center overflow-hidden">
+                      <motion.div 
+                        animate={{ 
+                          rotate: [0, 10, 0],
+                          scale: [1, 1.05, 1]
+                        }}
+                        transition={{ 
+                          duration: 10, 
+                          repeat: Infinity,
+                          ease: "easeInOut" 
+                        }}
+                        className="w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl absolute"
+                      />
+                      {React.cloneElement(feature.icon, { className: "w-32 h-32 text-indigo-200 opacity-20" })}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Scroll Hint (only on first banner) */}
       {currentIndex === 0 && isLocked && (

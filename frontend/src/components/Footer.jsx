@@ -16,14 +16,54 @@ export default function Footer() {
 
   return (
     <footer className="relative bg-gray-900 text-gray-300 overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 overflow-hidden opacity-20">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl"></div>
+      {/* Animated Grid Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Grid Pattern */}
+        <div 
+          className="absolute inset-0 opacity-50"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(139, 92, 246, 0.2) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(139, 92, 246, 0.2) 1px, transparent 1px)
+            `,
+            backgroundSize: '60px 60px'
+          }}
+        ></div>
+        
+        {/* Diagonal Grid Overlay */}
+        <div 
+          className="absolute inset-0 opacity-35"
+          style={{
+            backgroundImage: `
+              linear-gradient(45deg, rgba(147, 51, 234, 0.08) 25%, transparent 25%),
+              linear-gradient(-45deg, rgba(147, 51, 234, 0.08) 25%, transparent 25%),
+              linear-gradient(45deg, transparent 75%, rgba(147, 51, 234, 0.08) 75%),
+              linear-gradient(-45deg, transparent 75%, rgba(147, 51, 234, 0.08) 75%)
+            `,
+            backgroundSize: '120px 120px',
+            backgroundPosition: '0 0, 0 60px, 60px -60px, -60px 0px'
+          }}
+        ></div>
+        
+        {/* Glowing Accents */}
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/3 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        
+        {/* Dot Pattern Overlay */}
+        <div 
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(139, 92, 246, 0.5) 1px, transparent 1px)',
+            backgroundSize: '30px 30px'
+          }}
+        ></div>
+        
+        {/* Gradient Fade from Top */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-gray-900/50"></div>
       </div>
 
-      {/* Top solid bar */}
-      <div className="h-1 bg-purple-600"></div>
+      {/* Top accent bar with glow */}
+      <div className="relative h-1 bg-purple-600 shadow-lg shadow-purple-500/50"></div>
 
       {/* Main Footer Content */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -32,14 +72,15 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center space-x-3 group mb-6">
               <motion.div 
-                whileHover={{ scale: 1.1, rotate: 360 }}
-                transition={{ duration: 0.6 }}
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
                 className="relative"
               >
-                <div className="absolute inset-0 bg-purple-600 rounded-xl blur opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative bg-purple-600 p-2.5 rounded-xl shadow-lg">
-                  <Zap className="w-6 h-6 text-white" />
-                </div>
+                <img 
+                  src="/Simplexus.png"
+                  alt="Simplexus Logo"
+                  className="h-16 w-auto relative z-10"
+                />
               </motion.div>
               <div className="flex flex-col">
                 <span className="text-2xl font-bold text-white">
@@ -108,12 +149,6 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-bold mb-6 flex items-center gap-2">
               <span>Product</span>
-              <motion.div
-                animate={{ rotate: [0, 15, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <Sparkles className="w-4 h-4 text-purple-400" />
-              </motion.div>
             </h3>
             <ul className="space-y-3.5">
               <FooterLink to="/features">Features</FooterLink>
@@ -164,12 +199,6 @@ export default function Footer() {
             <div className="text-sm text-gray-400 flex items-center gap-2">
               <span>© {currentYear} Simplexus.</span>
               <span className="hidden sm:inline">All rights reserved.</span>
-              <motion.div
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <Sparkles className="w-3 h-3 text-purple-500" />
-              </motion.div>
             </div>
             <div className="flex flex-wrap justify-center gap-6 text-sm">
               <Link to="/privacy" className="text-gray-400 hover:text-purple-400 transition-colors duration-200 hover:underline decoration-purple-400">
@@ -186,8 +215,8 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Decorative bottom solid bar */}
-      <div className="h-1 bg-purple-600"></div>
+      {/* Decorative bottom bar with glow */}
+      <div className="relative h-1 bg-purple-600 shadow-lg shadow-purple-500/50"></div>
     </footer>
   );
 }

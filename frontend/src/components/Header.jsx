@@ -37,9 +37,9 @@ export default function Header() {
                 className="relative"
               >
                 <img 
-                  src="/Logo_of_Simplexus.png"
+                  src="/Simplexus.png"
                   alt="Simplexus Logo"
-                  className="h-10 w-auto relative z-10"
+                  className="h-18 w-auto relative z-10"
                 />
               </motion.div>
               <span 
