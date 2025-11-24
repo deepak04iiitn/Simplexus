@@ -11,14 +11,14 @@ function PricingSection() {
   const brandPricingPlans = [
     {
       tier: "Starter",
-      monthlyPrice: 29,
+      monthlyPrice: 39,
       annualPrice: 290, // ~17% discount (vs $348 if paid monthly)
       description: "Perfect for small brands",
       features: ['5 Active Campaigns', '10 Creators Included', 'Basic Reports', 'Email Support']
     },
     {
       tier: "Growth",
-      monthlyPrice: 99,
+      monthlyPrice: 129,
       annualPrice: 950, // ~20% discount (vs $1,188 if paid monthly)
       description: "For scaling brands & agencies",
       features: ['Unlimited Campaigns', '40 Creators Included', 'Advanced Workflows', 'Team Access (3)'],
@@ -26,7 +26,7 @@ function PricingSection() {
     },
     {
       tier: "Agency Pro",
-      monthlyPrice: 199,
+      monthlyPrice: 249,
       annualPrice: 1910, // ~20% discount (vs $2,388 if paid monthly)
       description: "For large agencies",
       features: ['Everything in Growth', '100 Creators Included', 'White-label Reports', 'Team Access (10)']
