@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User, LogOut, ChevronDown } from 'lucide-react';
+import { useSelector, useDispatch } from 'react-redux';
+import { signoutSuccess } from '../redux/user/userSlice';
+import toast from 'react-hot-toast';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,6 +21,38 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isProfileDropdownOpen && !event.target.closest('.profile-dropdown')) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isProfileDropdownOpen]);
+
+  const handleSignout = async () => {
+    try {
+      const res = await fetch('/backend/auth/signout', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      
+      if (data.success === false) {
+        toast.error(data.message);
+        return;
+      }
+      
+      dispatch(signoutSuccess());
+      toast.success('Signed out successfully!');
+      navigate('/');
+      setIsProfileDropdownOpen(false);
+    } catch (error) {
+      toast.error('Failed to sign out!');
+    }
+  };
 
   return (
     <>
@@ -61,25 +100,72 @@ export default function Header() {
               <NavLink to="/about">About</NavLink>
             </div>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons / User Profile */}
             <div className="hidden md:flex items-center space-x-4">
-              <Link 
-                to="/sign-in" 
-                className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200"
-              >
-                Sign In
-              </Link>
-              <motion.div 
-                whileHover={{ scale: 1.02 }} 
-                whileTap={{ scale: 0.98 }}
-              >
-                <Link 
-                  to="/sign-up" 
-                  className="px-6 py-2.5 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-all duration-200 shadow-sm hover:shadow-md"
-                >
-                  Start Free Trial
-                </Link>
-              </motion.div>
+              {currentUser ? (
+                // User Profile Dropdown
+                <div className="relative profile-dropdown">
+                  <button
+                    onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                    className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
+                  >
+                    <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                      {currentUser.username?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                    <span className="font-medium text-gray-900">{currentUser.username}</span>
+                    <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  <AnimatePresence>
+                    {isProfileDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden"
+                      >
+                        <div className="p-3 border-b border-gray-100">
+                          <p className="text-sm font-medium text-gray-900">{currentUser.username}</p>
+                          <p className="text-xs text-gray-500 truncate">{currentUser.email}</p>
+                          <p className="text-xs text-purple-600 font-medium mt-1">{currentUser.userType}</p>
+                        </div>
+                        <div className="py-1">
+                          <button
+                            onClick={handleSignout}
+                            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            <span>Sign Out</span>
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                // Sign In / Sign Up Buttons
+                <>
+                  <Link 
+                    to="/sign-in" 
+                    className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200"
+                  >
+                    Sign In
+                  </Link>
+                  <motion.div 
+                    whileHover={{ scale: 1.02 }} 
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Link 
+                      to="/sign-up" 
+                      className="px-6 py-2.5 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-all duration-200 shadow-sm hover:shadow-md"
+                    >
+                      Start Free Trial
+                    </Link>
+                  </motion.div>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -111,20 +197,47 @@ export default function Header() {
                   <MobileNavLink to="/solutions">Solutions</MobileNavLink>
                   <MobileNavLink to="/resources">Resources</MobileNavLink>
                   <MobileNavLink to="/about">About</MobileNavLink>
-                  <div className="pt-4 px-4 space-y-3">
-                    <Link 
-                      to="/sign-in" 
-                      className="block w-full px-4 py-2 text-center text-gray-600 font-medium hover:text-gray-900 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      Sign In
-                    </Link>
-                    <Link 
-                      to="/sign-up" 
-                      className="block w-full px-4 py-2 text-center bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
-                    >
-                      Start Free Trial
-                    </Link>
-                  </div>
+                  
+                  {currentUser ? (
+                    // Mobile User Profile Section
+                    <div className="pt-4 px-4 space-y-3">
+                      <div className="p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                            {currentUser.username?.charAt(0).toUpperCase() || 'U'}
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">{currentUser.username}</p>
+                            <p className="text-xs text-gray-500 truncate">{currentUser.email}</p>
+                          </div>
+                        </div>
+                        <p className="text-xs text-purple-600 font-medium">{currentUser.userType}</p>
+                      </div>
+                      <button
+                        onClick={handleSignout}
+                        className="w-full px-4 py-2 text-center text-gray-600 font-medium hover:text-gray-900 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  ) : (
+                    // Mobile Sign In / Sign Up
+                    <div className="pt-4 px-4 space-y-3">
+                      <Link 
+                        to="/sign-in" 
+                        className="block w-full px-4 py-2 text-center text-gray-600 font-medium hover:text-gray-900 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        Sign In
+                      </Link>
+                      <Link 
+                        to="/sign-up" 
+                        className="block w-full px-4 py-2 text-center bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
+                      >
+                        Start Free Trial
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -158,4 +271,3 @@ function MobileNavLink({ to, children }) {
     </Link>
   );
 }
-
