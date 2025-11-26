@@ -5,6 +5,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import authRoutes from './routes/auth.route.js';
+import userRoutes from './routes/user.route.js';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use(cors());
 
 app.use('/backend/auth', authRoutes);
+app.use('/backend/user', userRoutes);
 
 app.get('/backend/ping', (req, res) => {
   res.status(200).send('pong');

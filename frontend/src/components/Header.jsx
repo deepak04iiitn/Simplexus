@@ -109,8 +109,16 @@ export default function Header() {
                     onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                     className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-                      {currentUser.username?.charAt(0).toUpperCase() || 'U'}
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center text-white font-semibold">
+                      {currentUser.profilePicture ? (
+                        <img
+                          src={currentUser.profilePicture}
+                          alt={currentUser.username || 'User avatar'}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        currentUser.username?.charAt(0).toUpperCase() || 'U'
+                      )}
                     </div>
                     <span className="font-medium text-gray-900">{currentUser.username}</span>
                     <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
@@ -132,6 +140,16 @@ export default function Header() {
                           <p className="text-xs text-purple-600 font-medium mt-1">{currentUser.userType}</p>
                         </div>
                         <div className="py-1">
+                          <button
+                            onClick={() => {
+                              setIsProfileDropdownOpen(false);
+                              navigate('/profile');
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
+                          >
+                            <User className="w-4 h-4" />
+                            <span>Profile</span>
+                          </button>
                           <button
                             onClick={handleSignout}
                             className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
@@ -203,8 +221,16 @@ export default function Header() {
                     <div className="pt-4 px-4 space-y-3">
                       <div className="p-3 bg-gray-50 rounded-lg">
                         <div className="flex items-center space-x-3 mb-2">
-                          <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-                            {currentUser.username?.charAt(0).toUpperCase() || 'U'}
+                          <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center text-white font-semibold">
+                            {currentUser.profilePicture ? (
+                              <img
+                                src={currentUser.profilePicture}
+                                alt={currentUser.username || 'User avatar'}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              currentUser.username?.charAt(0).toUpperCase() || 'U'
+                            )}
                           </div>
                           <div>
                             <p className="font-medium text-gray-900">{currentUser.username}</p>
@@ -213,13 +239,23 @@ export default function Header() {
                         </div>
                         <p className="text-xs text-purple-600 font-medium">{currentUser.userType}</p>
                       </div>
-                      <button
-                        onClick={handleSignout}
-                        className="w-full px-4 py-2 text-center text-gray-600 font-medium hover:text-gray-900 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        <span>Sign Out</span>
-                      </button>
+                        <button
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            navigate('/profile');
+                          }}
+                          className="w-full px-4 py-2 text-center text-gray-600 font-medium hover:text-gray-900 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
+                        >
+                          <User className="w-4 h-4" />
+                          <span>Profile</span>
+                        </button>
+                        <button
+                          onClick={handleSignout}
+                          className="w-full mt-2 px-4 py-2 text-center text-gray-600 font-medium hover:text-gray-900 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>Sign Out</span>
+                        </button>
                     </div>
                   ) : (
                     // Mobile Sign In / Sign Up
