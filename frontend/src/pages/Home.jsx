@@ -7,7 +7,6 @@ import {
   TrendingUp, BarChart3, FileCheck, Layout, MessageSquare, Bell, ChevronDown,
   Rocket, Shield, Award, Layers, Globe, Lock, Calendar
 } from 'lucide-react';
-import StackedBannerFeatures from '../components/home/StackedBannerFeatures';
 import StatCard from '../components/home/StatCard';
 import ProblemCard from '../components/home/ProblemCard';
 import SolutionCard from '../components/home/SolutionCard';
@@ -17,6 +16,61 @@ import ScheduleCallSection from '../components/home/ScheduleCallSection';
 import FAQSection from '../components/home/FAQSection';
 
 export default function Home() {
+  const features = [
+    {
+      label: 'Interactive Briefs',
+      title: 'Turn Chaos into Clear, Actionable Briefs',
+      description:
+        'Replace scattered Google Docs and email threads with a single, structured brief hub that every creator can actually understand and follow.',
+      points: [
+        'Rich, guided brief templates tailored for creator campaigns',
+        'Mandatory fields so key details are never missed again',
+        'Real-time status on who has viewed and accepted the brief',
+      ],
+      icon: Layout,
+      accent: 'from-purple-500 via-violet-500 to-indigo-500',
+    },
+    {
+      label: 'Content Approvals',
+      title: 'Approve Content in Minutes, Not Weeks',
+      description:
+        'Centralize every draft, comment, and approval so your team never has to ask “Which version did we sign off on?” again.',
+      points: [
+        'Side‑by‑side comparison of revisions for faster decisions',
+        'Clear approval trails for legal and compliance teams',
+        'Smart reminders that nudge creators and stakeholders',
+      ],
+      icon: CheckCircle,
+      accent: 'from-blue-500 via-sky-500 to-cyan-500',
+    },
+    {
+      label: 'Deliverables & Tracking',
+      title: 'Always Know What’s Live, Pending, or Late',
+      description:
+        'Give everyone instant visibility into deliverables, deadlines, and performance—without living inside a spreadsheet.',
+      points: [
+        'Timeline view of every deliverable across all creators',
+        'Automatic status updates as links and proofs are submitted',
+        'Single source of truth for URLs, screenshots, and results',
+      ],
+      icon: BarChart3,
+      accent: 'from-emerald-500 via-teal-500 to-green-500',
+    },
+    {
+      label: 'Payments & Reporting',
+      title: 'Pay Creators Confidently and Prove ROI Instantly',
+      description:
+        'Connect completed work to payouts and client‑ready reports so finance and account teams stay perfectly in sync.',
+      points: [
+        'Payment readiness tied directly to deliverable completion',
+        'Campaign summaries ready to export to your clients',
+        'Unified view of spend, performance, and ROI by campaign',
+      ],
+      icon: DollarSign,
+      accent: 'from-amber-500 via-orange-500 to-rose-500',
+    },
+  ];
+
   return (
     <div className="min-h-screen">
       {/* Hero Section with Enhanced Design */}
@@ -378,6 +432,8 @@ export default function Home() {
               description="Sending briefs via email leads to confusion. No tracking if creators actually read them. Version control nightmares."
               color="purple"
               delay={0}
+              metaLeft="Messy briefs"
+              metaRight="Clear, central hub"
             />
             <ProblemCard 
               icon={<RefreshCw className="w-8 h-8" />}
@@ -385,6 +441,8 @@ export default function Home() {
               description="3-5 rounds of revisions scattered across platforms. 'Which version did we approve?' becomes your daily question."
               color="blue"
               delay={0.1}
+              metaLeft="Endless revisions"
+              metaRight="One approval trail"
             />
             <ProblemCard 
               icon={<BarChart3 className="w-8 h-8" />}
@@ -392,6 +450,8 @@ export default function Home() {
               description="Manually tracking deliverables across spreadsheets. No automated reminders. Progress visibility is zero."
               color="emerald"
               delay={0.2}
+              metaLeft="Spreadsheet overload"
+              metaRight="Live status view"
             />
             <ProblemCard 
               icon={<DollarSign className="w-8 h-8" />}
@@ -399,6 +459,8 @@ export default function Home() {
               description="'Did we pay this creator?' No clear connection between deliverable completion and payment status."
               color="orange"
               delay={0.3}
+              metaLeft="Unclear payouts"
+              metaRight="Proof‑linked payments"
             />
             <ProblemCard 
               icon={<MessageCircle className="w-8 h-8" />}
@@ -406,6 +468,8 @@ export default function Home() {
               description="Briefs lost in spam folders. Constant follow-ups. No confirmation creators understood the requirements."
               color="pink"
               delay={0.4}
+              metaLeft="Scattered chats"
+              metaRight="Aligned conversations"
             />
             <ProblemCard 
               icon={<FileText className="w-8 h-8" />}
@@ -413,20 +477,23 @@ export default function Home() {
               description="Manually compiling URLs, screenshots, and stats. Hours wasted creating a single client report."
               color="indigo"
               delay={0.5}
+              metaLeft="Manual reports"
+              metaRight="Instant summaries"
             />
           </div>
         </div>
       </section>
 
-      {/* Features Section - Stacked Banner Scroll Takeover */}
+      {/* Features Section - Alternating Sliding Features */}
       <section className="relative bg-gradient-to-br from-purple-50 via-white to-blue-50">
-        {/* Section Intro */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
-          <motion.div 
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-24">
+          {/* Section Intro */}
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center"
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
           >
             <span className="inline-block px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold mb-4">
               Powerful Features
@@ -435,13 +502,144 @@ export default function Home() {
               Everything You Need in <span className="text-purple-600">One Platform</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              From interactive briefs to automated reporting, discover the complete toolkit that streamlines your creator campaigns from start to finish.
+              Explore the core workflows that turn messy creator campaigns into a calm, repeatable operating system for your team.
             </p>
           </motion.div>
-        </div>
 
-        {/* Stacked Banner Features Component */}
-        <StackedBannerFeatures />
+          <div className="space-y-20">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              const isEven = index % 2 === 0;
+
+              return (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 80 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.65, delay: index * 0.2, ease: 'easeOut' }}
+                  className="grid gap-10 md:grid-cols-2 items-center"
+                >
+                  {/* Text Content */}
+                  <div className={isEven ? 'order-1 md:order-1' : 'order-2 md:order-2'}>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white shadow-sm border border-purple-100 mb-4">
+                      <span className="w-2 h-2 rounded-full bg-purple-500" />
+                      <span className="text-xs font-semibold uppercase tracking-wide text-purple-600">
+                        {feature.label}
+                      </span>
+                    </div>
+                    <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                      {feature.title}
+                    </h3>
+                    <p className="text-lg text-gray-600 mb-6">
+                      {feature.description}
+                    </p>
+                    <ul className="space-y-3">
+                      {feature.points.map((point) => (
+                        <li key={point} className="flex items-start gap-3">
+                          <div className="mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-purple-600">
+                            <Check className="w-4 h-4" />
+                          </div>
+                          <span className="text-sm md:text-base text-gray-700 leading-relaxed">
+                            {point}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Visual Side / "Image" */}
+                  <div className={isEven ? 'order-2 md:order-2' : 'order-1 md:order-1'}>
+                    <div className="relative">
+                      {/* Glow background */}
+                      <div className="absolute inset-6 rounded-3xl bg-gradient-to-br from-purple-200/40 via-blue-200/40 to-emerald-200/40 blur-2xl" />
+
+                      {/* Main card acting as image/visual */}
+                      <div className="relative rounded-3xl bg-slate-950 overflow-hidden shadow-2xl border border-slate-800">
+                        <div
+                          className={`h-28 bg-gradient-to-r ${feature.accent}`}
+                        >
+                          <div className="h-full w-full flex items-center justify-between px-8">
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 backdrop-blur">
+                                <Icon className="w-6 h-6 text-white" />
+                              </div>
+                              <div>
+                                <p className="text-xs uppercase tracking-wide text-white/70">
+                                  Simplexus
+                                </p>
+                                <p className="text-sm font-semibold text-white">
+                                  {feature.label}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex gap-1">
+                              <span className="inline-flex h-2 w-2 rounded-full bg-emerald-300" />
+                              <span className="inline-flex h-2 w-2 rounded-full bg-amber-300" />
+                              <span className="inline-flex h-2 w-2 rounded-full bg-rose-300" />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Body */}
+                        <div className="p-8 space-y-6 bg-slate-950">
+                          <div className="grid grid-cols-3 gap-4">
+                            <div className="col-span-2 space-y-3">
+                              <div className="h-3 w-24 rounded-full bg-slate-800" />
+                              <div className="h-4 w-40 rounded-full bg-slate-800" />
+                              <div className="space-y-2 pt-1">
+                                <div className="h-2 w-full rounded-full bg-slate-800" />
+                                <div className="h-2 w-5/6 rounded-full bg-slate-900" />
+                                <div className="h-2 w-4/6 rounded-full bg-slate-900" />
+                              </div>
+                            </div>
+                            <div className="flex flex-col justify-between">
+                              <div className="h-16 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center">
+                                <span className="text-2xl font-bold text-white">
+                                  98%
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-400 mt-2">
+                                On‑time completion when campaigns run through Simplexus.
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-3">
+                            <div className="rounded-2xl bg-slate-900 border border-slate-800 px-3 py-2">
+                              <p className="text-[11px] text-slate-400 mb-1">
+                                Creators
+                              </p>
+                              <p className="text-sm font-semibold text-white">
+                                240
+                              </p>
+                            </div>
+                            <div className="rounded-2xl bg-slate-900 border border-slate-800 px-3 py-2">
+                              <p className="text-[11px] text-slate-400 mb-1">
+                                Live briefs
+                              </p>
+                              <p className="text-sm font-semibold text-white">
+                                36
+                              </p>
+                            </div>
+                            <div className="rounded-2xl bg-slate-900 border border-slate-800 px-3 py-2">
+                              <p className="text-[11px] text-slate-400 mb-1">
+                                Approvals
+                              </p>
+                              <p className="text-sm font-semibold text-emerald-400">
+                                Instant
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
       </section>
 
       {/* For Who Section */}

@@ -1,49 +1,36 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-function ProblemCard({ icon, title, description, color, delay }) {
+function ProblemCard({ icon, title, description, color, delay, metaLeft, metaRight }) {
   const colorConfig = {
     purple: {
-      gradient: 'from-purple-500 to-purple-600',
-      lightGradient: 'from-purple-50 to-purple-100',
-      shadowColor: 'shadow-purple-500/15',
-      accentColor: 'bg-purple-500',
-      borderGlow: 'group-hover:border-purple-400'
+      accentDot: 'bg-purple-500',
+      accentBorder: 'border-purple-100',
+      badge: 'bg-purple-50 text-purple-700 border-purple-100',
     },
     blue: {
-      gradient: 'from-blue-500 to-blue-600',
-      lightGradient: 'from-blue-50 to-blue-100',
-      shadowColor: 'shadow-blue-500/15',
-      accentColor: 'bg-blue-500',
-      borderGlow: 'group-hover:border-blue-400'
+      accentDot: 'bg-blue-500',
+      accentBorder: 'border-blue-100',
+      badge: 'bg-blue-50 text-blue-700 border-blue-100',
     },
     emerald: {
-      gradient: 'from-emerald-500 to-emerald-600',
-      lightGradient: 'from-emerald-50 to-emerald-100',
-      shadowColor: 'shadow-emerald-500/15',
-      accentColor: 'bg-emerald-500',
-      borderGlow: 'group-hover:border-emerald-400'
+      accentDot: 'bg-emerald-500',
+      accentBorder: 'border-emerald-100',
+      badge: 'bg-emerald-50 text-emerald-700 border-emerald-100',
     },
     orange: {
-      gradient: 'from-orange-500 to-orange-600',
-      lightGradient: 'from-orange-50 to-orange-100',
-      shadowColor: 'shadow-orange-500/15',
-      accentColor: 'bg-orange-500',
-      borderGlow: 'group-hover:border-orange-400'
+      accentDot: 'bg-orange-500',
+      accentBorder: 'border-orange-100',
+      badge: 'bg-orange-50 text-orange-700 border-orange-100',
     },
     pink: {
-      gradient: 'from-pink-500 to-pink-600',
-      lightGradient: 'from-pink-50 to-pink-100',
-      shadowColor: 'shadow-pink-500/15',
-      accentColor: 'bg-pink-500',
-      borderGlow: 'group-hover:border-pink-400'
+      accentDot: 'bg-pink-500',
+      accentBorder: 'border-pink-100',
+      badge: 'bg-pink-50 text-pink-700 border-pink-100',
     },
     indigo: {
-      gradient: 'from-indigo-500 to-indigo-600',
-      lightGradient: 'from-indigo-50 to-indigo-100',
-      shadowColor: 'shadow-indigo-500/15',
-      accentColor: 'bg-indigo-500',
-      borderGlow: 'group-hover:border-indigo-400'
+      accentDot: 'bg-indigo-500',
+      accentBorder: 'border-indigo-100',
     },
   };
 
@@ -54,38 +41,52 @@ function ProblemCard({ icon, title, description, color, delay }) {
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay, duration: 0.6, type: "spring", stiffness: 100 }}
+      transition={{ delay, duration: 0.6, type: "spring", stiffness: 110 }}
       className="group relative"
     >
-      {/* Premium Card Container */}
       <motion.div
-        whileHover={{ y: -12 }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
-        className={`relative h-full bg-white p-10 rounded-3xl border border-slate-200 ${config.borderGlow} transition-all duration-500 shadow-xl ${config.shadowColor} backdrop-blur-sm`}
+        whileHover={{ y: -6, scale: 1.01 }}
+        transition={{ type: "spring", stiffness: 260, damping: 22 }}
+        className={`relative h-full bg-white p-7 rounded-2xl border border-slate-200/90 hover:border-slate-300 hover:shadow-lg/40 transition-all duration-300 ${config.accentBorder}`}
       >
-        
-        {/* Content wrapper */}
-        <div className="relative z-10">
-          {/* Premium Icon container */}
-          <div className="mb-8">
-            <motion.div 
-              whileHover={{ scale: 1.15, rotate: 8 }}
-              transition={{ type: "spring", stiffness: 500, damping: 15 }}
-              className={`inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br ${config.gradient} rounded-2xl shadow-xl ${config.shadowColor} relative`}
-            >
-              <div className="text-white relative z-10">
-                {icon}
-              </div>
-            </motion.div>
+        <div className="absolute inset-0 rounded-2xl bg-slate-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col gap-5">
+          {/* Top accent row */}
+          <div className="flex items-center gap-2">
+            <span className={`inline-flex h-2 w-2 rounded-full ${config.accentDot}`} />
+            <span className="h-px w-16 rounded-full bg-slate-200" />
           </div>
 
-          {/* Premium Typography */}
-          <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight leading-tight">
-            {title}
-          </h3>
-          <p className="text-slate-600 leading-relaxed text-[15px] font-medium">
+          {/* Icon + title row */}
+          <div className="flex items-start gap-4">
+            <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 overflow-hidden shadow-sm">
+              <span className="pointer-events-none absolute inset-0 bg-slate-100/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <span className="text-[19px] leading-none">
+                {icon}
+              </span>
+            </div>
+
+            <h3 className="text-base md:text-lg font-semibold text-slate-900 tracking-tight leading-snug">
+              {title}
+            </h3>
+          </div>
+
+          <p className="text-slate-600 leading-relaxed text-[13px] md:text-[14px] font-medium">
             {description}
           </p>
+
+          {/* Subtle bottom meta row */}
+          <div className="flex items-center justify-between pt-1 text-[11px] text-slate-400">
+            <div className="flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+              <span>{metaLeft || 'Operational friction'}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+              <span>{metaRight || 'Simplexus impact'}</span>
+            </div>
+          </div>
         </div>
       </motion.div>
     </motion.div>
