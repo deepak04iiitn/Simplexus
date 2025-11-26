@@ -91,13 +91,13 @@ export default function Header() {
               </span>
             </Link>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Navigation - linked to Home sections */}
             <div className="hidden md:flex items-center space-x-8">
-              <NavLink to="/features">Features</NavLink>
-              <NavLink to="/pricing">Pricing</NavLink>
-              <NavLink to="/solutions">Solutions</NavLink>
-              <NavLink to="/resources">Resources</NavLink>
-              <NavLink to="/about">About</NavLink>
+              <NavLink to="/#features">Features</NavLink>
+              <NavLink to="/#pricing">Pricing</NavLink>
+              <NavLink to="/#solutions">Solutions</NavLink>
+              <NavLink to="/#demo">Demo</NavLink>
+              <NavLink to="/#how-it-works">About</NavLink>
             </div>
 
             {/* CTA Buttons / User Profile */}
@@ -181,7 +181,7 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile Menu - linked to Home sections */}
           <AnimatePresence>
             {isMobileMenuOpen && (
               <motion.div 
@@ -192,11 +192,11 @@ export default function Header() {
                 className="md:hidden overflow-hidden bg-white border-t border-gray-100"
               >
                 <div className="py-4 space-y-1">
-                  <MobileNavLink to="/features">Features</MobileNavLink>
-                  <MobileNavLink to="/pricing">Pricing</MobileNavLink>
-                  <MobileNavLink to="/solutions">Solutions</MobileNavLink>
-                  <MobileNavLink to="/resources">Resources</MobileNavLink>
-                  <MobileNavLink to="/about">About</MobileNavLink>
+                  <MobileNavLink to="/#features">Features</MobileNavLink>
+                  <MobileNavLink to="/#pricing">Pricing</MobileNavLink>
+                  <MobileNavLink to="/#solutions">Solutions</MobileNavLink>
+                  <MobileNavLink to="/#demo">Demo</MobileNavLink>
+                  <MobileNavLink to="/#how-it-works">About</MobileNavLink>
                   
                   {currentUser ? (
                     // Mobile User Profile Section

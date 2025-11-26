@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Mail, FileText, CheckCircle, Clock, DollarSign, MessageCircle, Target,
@@ -16,6 +16,23 @@ import ScheduleCallSection from '../components/home/ScheduleCallSection';
 import FAQSection from '../components/home/FAQSection';
 
 export default function Home() {
+  const location = useLocation();
+
+  // Smooth scroll to section when URL hash changes (e.g. /#pricing)
+  useEffect(() => {
+    if (!location.hash) return;
+    const id = location.hash.replace('#', '');
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    // Account for fixed header height
+    const yOffset = -90;
+    const y =
+      el.getBoundingClientRect().top + window.scrollY + yOffset;
+
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }, [location.hash]);
+
   const features = [
     {
       label: 'Interactive Briefs',
@@ -484,8 +501,226 @@ export default function Home() {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-24 bg-gradient-to-b from-white via-purple-50/60 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 text-purple-700 border border-purple-200 text-xs font-semibold tracking-wide uppercase">
+              <Calendar className="w-4 h-4 text-purple-500" />
+              How Simplexus runs a campaign
+            </span>
+            <h2 className="mt-6 text-3xl md:text-5xl font-bold tracking-tight text-gray-900">
+              From brief to payout in four calm steps
+            </h2>
+            <p className="mt-4 max-w-2xl mx-auto text-base md:text-lg text-gray-600">
+              Simplexus gives your team one predictable flow for every creator collaboration—so you always know
+              what&apos;s next, who owns it, and what &quot;done&quot; looks like.
+            </p>
+            {/* Flow pills with arrows */}
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-2 md:gap-3 text-xs md:text-sm text-gray-500">
+              {['Brief', 'Collaborate', 'Approve', 'Track & pay'].map((label, idx, arr) => (
+                <React.Fragment key={label}>
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white shadow-sm border border-purple-100/70 backdrop-blur-sm">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-purple-600 text-white text-[11px] font-semibold">
+                      {idx + 1}
+                    </span>
+                    <span className="font-medium tracking-wide text-gray-700">
+                      {label}
+                    </span>
+                  </div>
+                  {idx !== arr.length - 1 && (
+                    <ArrowRight className="hidden sm:inline-flex w-4 h-4 text-purple-300" />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </motion.div>
+
+          <div className="relative grid gap-8 sm:gap-9 lg:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Desktop connector line */}
+            <div className="pointer-events-none hidden lg:block absolute left-[4%] right-[4%] top-[88px] h-px bg-gradient-to-r from-purple-200 via-violet-300 to-amber-200" />
+
+            {/* Step 1 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.4, delay: 0.05 }}
+              className="group relative flex flex-col rounded-3xl bg-white/90 backdrop-blur-xl border border-purple-100/70 shadow-[0_24px_60px_rgba(15,23,42,0.10)] p-7 md:p-8 min-h-[240px] transition-all duration-300 hover:-translate-y-3 hover:shadow-2xl hover:border-purple-200"
+            >
+              <div className="pointer-events-none absolute inset-x-4 -top-4 h-10 rounded-3xl bg-gradient-to-r from-purple-500/10 via-purple-400/5 to-transparent blur-2xl" />
+              <div className="flex items-center justify-between mb-4">
+                <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-purple-100 text-purple-600 font-semibold text-sm">
+                  1
+                </div>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-purple-400">
+                  Brief
+                </span>
+              </div>
+              <div className="flex items-start gap-4 mb-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-purple-50 text-purple-600">
+                  <Layout className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-base md:text-lg font-semibold text-gray-900">Create an interactive brief</p>
+                  <p className="mt-2 text-xs md:text-sm text-gray-600 leading-relaxed">
+                    Guided, interactive briefs.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Step 2 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+              className="group relative flex flex-col rounded-3xl bg-white/90 backdrop-blur-xl border border-blue-100/70 shadow-[0_24px_60px_rgba(15,23,42,0.10)] p-7 md:p-8 min-h-[240px] transition-all duration-300 hover:-translate-y-3 hover:shadow-2xl hover:border-blue-200"
+            >
+              <div className="pointer-events-none absolute inset-x-4 -top-4 h-10 rounded-3xl bg-gradient-to-r from-sky-500/10 via-sky-400/5 to-transparent blur-2xl" />
+              <div className="flex items-center justify-between mb-4">
+                <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 font-semibold text-sm">
+                  2
+                </div>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-sky-400">
+                  Collaborate
+                </span>
+              </div>
+              <div className="flex items-start gap-4 mb-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-base md:text-lg font-semibold text-gray-900">Creators submit drafts</p>
+                  <p className="mt-2 text-xs md:text-sm text-gray-600 leading-relaxed">
+                    Centralized draft reviews.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Step 3 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.4, delay: 0.25 }}
+              className="group relative flex flex-col rounded-3xl bg-white/90 backdrop-blur-xl border border-emerald-100/70 shadow-[0_24px_60px_rgba(15,23,42,0.10)] p-7 md:p-8 min-h-[240px] transition-all duration-300 hover:-translate-y-3 hover:shadow-2xl hover:border-emerald-200"
+            >
+              <div className="pointer-events-none absolute inset-x-4 -top-4 h-10 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-emerald-400/5 to-transparent blur-2xl" />
+              <div className="flex items-center justify-between mb-4">
+                <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 font-semibold text-sm">
+                  3
+                </div>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-500">
+                  Approve
+                </span>
+              </div>
+              <div className="flex items-start gap-4 mb-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-base md:text-lg font-semibold text-gray-900">Sign off in one place</p>
+                  <p className="mt-2 text-xs md:text-sm text-gray-600 leading-relaxed">
+                    One-click approvals.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Step 4 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.4, delay: 0.35 }}
+              className="group relative flex flex-col rounded-3xl bg-white/90 backdrop-blur-xl border border-amber-100/70 shadow-[0_24px_60px_rgba(15,23,42,0.10)] p-7 md:p-8 min-h-[240px] transition-all duration-300 hover:-translate-y-3 hover:shadow-2xl hover:border-amber-200"
+            >
+              <div className="pointer-events-none absolute inset-x-4 -top-4 h-10 rounded-3xl bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-transparent blur-2xl" />
+              <div className="flex items-center justify-between mb-4">
+                <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 font-semibold text-sm">
+                  4
+                </div>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-500">
+                  Track & pay
+                </span>
+              </div>
+              <div className="flex items-start gap-4 mb-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
+                  <DollarSign className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-base md:text-lg font-semibold text-gray-900">Track results & trigger payouts</p>
+                  <p className="mt-2 text-xs md:text-sm text-gray-600 leading-relaxed">
+                    Live status & payouts.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mid-page CTA */}
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6 }}
+            className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-600 via-indigo-600 to-fuchsia-600 px-6 py-10 sm:px-10 sm:py-12 shadow-2xl"
+          >
+            <div className="absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-white/10 to-transparent opacity-60 pointer-events-none" />
+            <div className="relative grid gap-8 md:grid-cols-[minmax(0,1.6fr),minmax(0,1fr)] items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-purple-100 mb-4 border border-white/20">
+                  <Rocket className="w-3.5 h-3.5" />
+                  Built to launch creator campaigns
+                </div>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 leading-tight">
+                  Ready to run your next campaign the Simplexus way?
+                </h2>
+                <p className="text-sm sm:text-base text-purple-100/90 max-w-xl">
+                  Start a 7‑day free trial in minutes, or book a live walkthrough with the founder to see how Simplexus
+                  fits your existing workflows.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 justify-end">
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                  <Link
+                    to="/sign-up"
+                    className="inline-flex items-center justify-center w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white text-purple-700 font-semibold text-sm shadow-lg hover:bg-purple-50 transition-colors"
+                  >
+                    Start free trial
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </Link>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                  <Link
+                    to="/contact"
+                    className="inline-flex items-center justify-center w-full sm:w-auto px-7 py-3.5 rounded-xl border-2 border-white/60 text-white font-semibold text-sm bg-white/0 hover:bg-white/10 transition-colors"
+                  >
+                    <Calendar className="mr-2 w-4 h-4" />
+                    Book a live demo
+                  </Link>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Features Section - Alternating Sliding Features */}
-      <section className="relative bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      <section id="features" className="relative bg-gradient-to-br from-purple-50 via-white to-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-24">
           {/* Section Intro */}
           <motion.div
@@ -642,6 +877,211 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Why Simplexus vs. Slack / Notion / Docs / Spreadsheets */}
+      <section id="solutions" className="py-24 bg-gradient-to-b from-white via-purple-50/60 to-blue-50/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 text-purple-700 border border-purple-200 text-xs font-semibold tracking-wide uppercase">
+              <Rocket className="w-4 h-4 text-purple-500" />
+              Why teams replace 4+ tools with Simplexus
+            </span>
+            <h2 className="mt-6 text-3xl md:text-5xl font-bold tracking-tight text-gray-900">
+              One platform instead of{' '}
+              <span className="text-purple-600">Slack</span>, <span className="text-sky-600">Notion</span>,{' '}
+              <span className="text-amber-600">Docs</span> & <span className="text-rose-600">Sheets</span>
+            </h2>
+            <p className="mt-4 max-w-3xl mx-auto text-base md:text-lg text-gray-600">
+              Simplexus turns a noisy stack of generic tools into a calm, campaign‑ready operating system—so your team
+              can brief, approve, track, and pay creators from a single, purpose‑built workspace.
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-10 items-stretch">
+            {/* Legacy stack column */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.6 }}
+              className="rounded-3xl border border-gray-200 bg-white/80 backdrop-blur p-8 shadow-xl shadow-purple-100"
+            >
+              <p className="text-xs font-semibold tracking-[0.18em] text-purple-400 mb-5">
+                THE OLD WAY
+              </p>
+              <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4">
+                A patchwork of tools that don&apos;t talk to each other
+              </h3>
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-2xl bg-sky-100 flex items-center justify-center">
+                    <MessageSquare className="w-4 h-4 text-sky-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">Slack / chat</p>
+                    <p className="text-xs text-gray-500">
+                      Approvals and briefs disappear into endless channels and threads.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-2xl bg-indigo-100 flex items-center justify-center">
+                    <Layout className="w-4 h-4 text-indigo-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">Notion / wikis</p>
+                    <p className="text-xs text-gray-500">
+                      Flexible, but no enforcement of fields, status, or deliverable ownership.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-2xl bg-amber-100 flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-amber-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">Google Docs</p>
+                    <p className="text-xs text-gray-500">
+                      Multiple versions, no confirmation that creators actually saw the latest brief.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-2xl bg-emerald-100 flex items-center justify-center">
+                    <BarChart3 className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">Spreadsheets</p>
+                    <p className="text-xs text-gray-500">
+                      Manually tracked deadlines, payments, and performance that go stale overnight.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 text-xs text-gray-600 mt-2">
+                <div className="flex items-center gap-2">
+                  <Bell className="w-3.5 h-3.5 text-rose-400" />
+                  <span>Scattered notifications</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Slow approvals</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Eye className="w-3.5 h-3.5 text-sky-400" />
+                  <span>No visibility</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Unclear payouts</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Simplexus column */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.6 }}
+              className="relative overflow-hidden rounded-3xl border border-purple-200 bg-white shadow-xl shadow-purple-100"
+            >
+              <div className="h-full w-full rounded-3xl bg-white p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <p className="text-xs font-semibold tracking-[0.18em] text-purple-500 mb-2">
+                      THE SIMPLEXUS WAY
+                    </p>
+                    <h3 className="text-xl md:text-2xl font-semibold text-gray-900">
+                      One command center for every creator campaign
+                    </h3>
+                  </div>
+                  <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 border border-purple-200">
+                    <Check className="w-3.5 h-3.5 text-emerald-500" />
+                    <span className="text-[11px] font-medium text-purple-700">
+                      Cheaper than stacking 4+ tools
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 mb-6">
+                  <div className="flex gap-3">
+                    <div className="mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-purple-100 text-purple-600">
+                      <Layout className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">Interactive, enforced briefs</p>
+                      <p className="text-xs text-gray-600">
+                        Mandatory fields, version control, and read receipts so no critical detail is missed.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                      <CheckCircle className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">Built‑in approvals & audit trails</p>
+                      <p className="text-xs text-gray-600">
+                        Centralize every draft, comment, and sign‑off with a clear history for legal & clients.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-sky-100 text-sky-600">
+                      <BarChart3 className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">Live deliverables & payment status</p>
+                      <p className="text-xs text-gray-600">
+                        Always know what&apos;s submitted, what&apos;s late, and which payouts are ready to release.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                      <FileCheck className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">Instant, client‑ready reporting</p>
+                      <p className="text-xs text-gray-600">
+                        URLs, screenshots, and performance metrics roll up automatically into shareable summaries.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-4 justify-between mt-4">
+                  <div className="flex flex-wrap gap-3 text-xs text-gray-700">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 border border-purple-200">
+                      <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
+                      <span>Higher campaign ROI</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 border border-sky-200">
+                      <Clock className="w-3.5 h-3.5 text-sky-500" />
+                      <span>Hours saved every week</span>
+                    </span>
+                  </div>
+                  <Link
+                    to="/sign-up"
+                    className="inline-flex items-center gap-2 rounded-full bg-white text-slate-900 text-xs font-semibold px-4 py-2 shadow-lg hover:bg-slate-100 transition-colors"
+                  >
+                    See pricing & ROI
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+      
       {/* For Who Section */}
       <section className="py-24 bg-gradient-to-b from-purple-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -688,103 +1128,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <TestimonialsSection />
+      {/* Testimonials Section (Resources: social proof) */}
+      <section id="resources">
+        <TestimonialsSection />
+      </section>
 
       {/* Pricing Section */}
-      <PricingSection />
+      <section id="pricing">
+        <PricingSection />
+      </section>
 
-      {/* Schedule a Call with Founder Section */}
-      <ScheduleCallSection />
+      {/* Schedule a Call with Founder Section (Demo) */}
+      <section id="demo">
+        <ScheduleCallSection />
+      </section>
 
       {/* FAQ Section */}
-      <FAQSection />
-
-      {/* CTA Section with Wave Design */}
-      <section className="relative overflow-hidden">
-        {/* Wave SVG */}
-        <div className="absolute top-0 left-0 w-full overflow-hidden leading-none">
-          <svg className="relative block w-full h-24" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="#8b5cf6"></path>
-          </svg>
-        </div>
-
-        <div className="relative bg-purple-600 pt-32 pb-24">
-          {/* Decorative circles */}
-          <div className="absolute top-20 left-10 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-80 h-80 bg-purple-700 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse" style={{ animationDelay: '2s' }}></div>
-          
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <div className="inline-flex items-center px-4 py-2 bg-purple-500 rounded-full text-purple-100 text-sm font-semibold mb-6">
-                <TrendingUp className="w-4 h-4 mr-2" />
-                Start Your Journey Today
-              </div>
-              
-              <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-                Ready to Transform Your{' '}
-                <span className="relative inline-block">
-                  Campaigns?
-                  <svg className="absolute -bottom-2 left-0 w-full" height="12" viewBox="0 0 200 12" fill="none">
-                    <path d="M2 10C60 2 140 2 198 10" stroke="#fff" strokeWidth="3" strokeLinecap="round"/>
-                  </svg>
-                </span>
-              </h2>
-              
-              <p className="text-xl md:text-2xl text-purple-100 mb-10 max-w-3xl mx-auto">
-                Join 10,000+ brands and agencies already streamlining their creator collaborations
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link 
-                    to="/sign-up" 
-                    className="inline-flex items-center px-10 py-5 bg-white text-purple-600 font-bold rounded-xl hover:bg-gray-50 transition-all duration-300 shadow-2xl text-lg"
-                  >
-                    Start Free Trial
-                    <ArrowRight className="ml-3 w-6 h-6" />
-                  </Link>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link 
-                    to="/contact" 
-                    className="inline-flex items-center px-10 py-5 bg-transparent border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:text-purple-600 transition-all duration-300 text-lg"
-                  >
-                    <MessageSquare className="mr-3 w-6 h-6" />
-                    Talk to Sales
-                  </Link>
-                </motion.div>
-              </div>
-
-              {/* Trust indicators */}
-              <div className="flex flex-wrap items-center justify-center gap-8 text-purple-100">
-                <div className="flex items-center">
-                  <Shield className="w-5 h-5 mr-2" />
-                  <span className="text-sm font-medium">Enterprise Security</span>
-                </div>
-                <div className="flex items-center">
-                  <Lock className="w-5 h-5 mr-2" />
-                  <span className="text-sm font-medium">GDPR Compliant</span>
-                </div>
-                <div className="flex items-center">
-                  <Award className="w-5 h-5 mr-2" />
-                  <span className="text-sm font-medium">24/7 Support</span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Bottom Wave */}
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none rotate-180">
-          <svg className="relative block w-full h-24" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="#8b5cf6"></path>
-          </svg>
-        </div>
+      <section id="faq">
+        <FAQSection />
       </section>
     </div>
   );
