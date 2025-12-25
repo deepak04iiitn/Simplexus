@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { signUpStart, signUpSuccess, signUpFailure } from '../../redux/user/userSlice';
 import toast from 'react-hot-toast';
@@ -8,6 +8,9 @@ import { motion } from 'framer-motion';
 import AuthLayout from '../../components/AuthLayout';
 
 export default function SignUp() {
+  const [searchParams] = useSearchParams();
+  const invitationToken = searchParams.get('invitation');
+  
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -19,6 +22,13 @@ export default function SignUp() {
   const { loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // If there's an invitation token, pre-select Creator as user type
+  useEffect(() => {
+    if (invitationToken) {
+      setFormData(prev => ({ ...prev, userType: 'Creator' }));
+    }
+  }, [invitationToken]);
 
   const handleChange = (e) => {
     const value = e.target.value.trim();
@@ -76,8 +86,29 @@ export default function SignUp() {
       }
 
       dispatch(signUpSuccess(data));
-      toast.success('Account created successfully!');
-      navigate('/');
+      
+      // Show success message with campaign assignment info if available
+      // Check if there's an invitation token in URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const invitationToken = urlParams.get('invitation');
+      
+      if (data.assignedCampaigns && data.assignedCampaigns.length > 0) {
+        toast.success(`Account created! You've been assigned to ${data.assignedCampaigns.length} campaign(s).`, { duration: 5000 });
+        // If there's an invitation token, redirect to private dashboard
+        if (invitationToken) {
+          navigate(`/invite/${invitationToken}`);
+        } else {
+          navigate('/');
+        }
+      } else {
+        toast.success('Account created successfully!');
+        // If there's an invitation token, redirect to private dashboard
+        if (invitationToken) {
+          navigate(`/invite/${invitationToken}`);
+        } else {
+          navigate('/');
+        }
+      }
     } catch (error) {
       dispatch(signUpFailure(error.message));
       toast.error('Something went wrong!');
@@ -130,10 +161,25 @@ export default function SignUp() {
             </h1>
             <div className="h-1.5 w-20 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full"></div>
           </motion.div>
+          {invitationToken && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mb-4 p-4 bg-purple-50 border border-purple-200 rounded-lg"
+            >
+              <div className="flex items-center gap-2 text-purple-800">
+                <Mail className="w-5 h-5" />
+                <p className="text-sm font-medium">
+                  You've been invited to join a campaign! Sign up as a Creator to get started.
+                </p>
+              </div>
+            </motion.div>
+          )}
           <motion.p
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: invitationToken ? 0.3 : 0.2 }}
             className="text-lg text-slate-600 leading-relaxed"
           >
             Create your account to start collaborating with creators, brands, and agencies worldwide.
@@ -231,15 +277,19 @@ export default function SignUp() {
               {userTypes.map((item) => {
                 const Icon = item.icon;
                 const isSelected = formData.userType === item.type;
+                const isDisabled = invitationToken && item.type !== 'Creator';
                 
                 return (
                   <button
                     key={item.type}
                     type="button"
-                    onClick={() => handleUserTypeChange(item.type)}
+                    onClick={() => !isDisabled && handleUserTypeChange(item.type)}
+                    disabled={isDisabled}
                     className={`relative p-3 rounded-xl border-2 transition-all text-center
                       ${isSelected
                         ? 'border-blue-500 bg-blue-50'
+                        : isDisabled
+                        ? 'border-slate-100 bg-slate-50 opacity-50 cursor-not-allowed'
                         : 'border-slate-200 bg-white hover:border-slate-300'
                       }`}
                   >

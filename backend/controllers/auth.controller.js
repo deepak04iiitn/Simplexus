@@ -1,4 +1,6 @@
 import User from "../models/user.model.js";
+import Campaign from "../models/campaign.model.js";
+import Invitation from "../models/invitation.model.js";
 import bcryptjs from 'bcryptjs';
 import { errorHandler } from "../utils/error.js";
 import jwt from 'jsonwebtoken';
@@ -32,6 +34,24 @@ export const signup = async (req , res , next) => {
         
         await newUser.save();
 
+        // Don't auto-assign - creator must accept invitation explicitly
+        // Just track that they have pending invitations
+        const pendingInvitations = await Invitation.find({
+            email: email.toLowerCase(),
+            status: 'Pending'
+        }).populate('campaignId');
+
+        const pendingCampaigns = [];
+        for (const invitation of pendingInvitations) {
+            if (invitation.isValid() && invitation.campaignId && newUser.userType === 'Creator') {
+                pendingCampaigns.push({
+                    campaignId: invitation.campaignId._id,
+                    campaignName: invitation.campaignId.name,
+                    invitationToken: invitation.token
+                });
+            }
+        }
+
         // Generate JWT token for automatic login
         const token = jwt.sign(
             { 
@@ -46,6 +66,14 @@ export const signup = async (req , res , next) => {
         const { password: pass, ...rest } = newUser._doc;
 
         // Set cookie and return user data for automatic login
+        const response = {
+            ...rest,
+            ...(pendingCampaigns.length > 0 && { 
+                message: `You have ${pendingCampaigns.length} pending invitation(s)`,
+                pendingInvitations: pendingCampaigns
+            })
+        };
+
         res.status(200)
            .cookie('access_token', token, {
                 httpOnly: true,
@@ -53,7 +81,7 @@ export const signup = async (req , res , next) => {
                 sameSite: 'strict',
                 secure: process.env.NODE_ENV === 'production'
            })
-           .json(rest);
+           .json(response);
 
     } catch (error) {
         next(error);

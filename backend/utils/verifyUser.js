@@ -26,3 +26,22 @@ export const verifyAdmin = (req, res, next) => {
     }
     next();
 }
+
+// Optional token verification - doesn't fail if no token
+export const verifyTokenOptional = (req, res, next) => {
+    const token = req.cookies.access_token;
+
+    if (!token) {
+        req.user = null;
+        return next();
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+            req.user = null;
+            return next();
+        }
+        req.user = user;
+        next();
+    });
+}

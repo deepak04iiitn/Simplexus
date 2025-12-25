@@ -6,6 +6,14 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import authRoutes from './routes/auth.route.js';
 import userRoutes from './routes/user.route.js';
+import campaignRoutes from './routes/campaign.route.js';
+import briefRoutes from './routes/brief.route.js';
+import deliverableRoutes from './routes/deliverable.route.js';
+import reviewRoutes from './routes/review.route.js';
+import paymentRoutes from './routes/payment.route.js';
+import reportRoutes from './routes/report.route.js';
+import creatorProfileRoutes from './routes/creatorProfile.route.js';
+import ratingRoutes from './routes/rating.route.js';
 
 dotenv.config();
 
@@ -27,6 +35,14 @@ app.use(cors());
 
 app.use('/backend/auth', authRoutes);
 app.use('/backend/user', userRoutes);
+app.use('/backend/campaigns', campaignRoutes);
+app.use('/backend/briefs', briefRoutes);
+app.use('/backend/deliverables', deliverableRoutes);
+app.use('/backend/reviews', reviewRoutes);
+app.use('/backend/payments', paymentRoutes);
+app.use('/backend/reports', reportRoutes);
+app.use('/backend/creator-profiles', creatorProfileRoutes);
+app.use('/backend/ratings', ratingRoutes);
 
 app.get('/backend/ping', (req, res) => {
   res.status(200).send('pong');

@@ -91,13 +91,29 @@ export default function Header() {
               </span>
             </Link>
 
-            {/* Desktop Navigation - linked to Home sections */}
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              <NavLink to="/#features">Features</NavLink>
-              <NavLink to="/#pricing">Pricing</NavLink>
-              <NavLink to="/#solutions">Solutions</NavLink>
-              <NavLink to="/#demo">Demo</NavLink>
-              <NavLink to="/#how-it-works">About</NavLink>
+              {currentUser ? (
+                // Logged-in navigation
+                <>
+                  <NavLink to="/dashboard">Dashboard</NavLink>
+                  {(currentUser.userType === 'Brand' || currentUser.userType === 'Agency') && (
+                    <NavLink to="/campaigns/create">Create Campaign</NavLink>
+                  )}
+                  {currentUser.userType === 'Creator' && (
+                    <NavLink to={`/creators/${currentUser._id}`}>My Profile</NavLink>
+                  )}
+                </>
+              ) : (
+                // Public navigation
+                <>
+                  <NavLink to="/#features">Features</NavLink>
+                  <NavLink to="/#pricing">Pricing</NavLink>
+                  <NavLink to="/#solutions">Solutions</NavLink>
+                  <NavLink to="/#demo">Demo</NavLink>
+                  <NavLink to="/#how-it-works">About</NavLink>
+                </>
+              )}
             </div>
 
             {/* CTA Buttons / User Profile */}
@@ -143,13 +159,33 @@ export default function Header() {
                           <button
                             onClick={() => {
                               setIsProfileDropdownOpen(false);
+                              navigate('/dashboard');
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
+                          >
+                            <span>Dashboard</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setIsProfileDropdownOpen(false);
                               navigate('/profile');
                             }}
                             className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
                           >
                             <User className="w-4 h-4" />
-                            <span>Profile</span>
+                            <span>Profile Settings</span>
                           </button>
+                          {currentUser.userType === 'Creator' && (
+                            <button
+                              onClick={() => {
+                                setIsProfileDropdownOpen(false);
+                                navigate(`/creators/${currentUser._id}`);
+                              }}
+                              className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
+                            >
+                              <span>Public Profile</span>
+                            </button>
+                          )}
                           <button
                             onClick={handleSignout}
                             className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
@@ -210,11 +246,25 @@ export default function Header() {
                 className="md:hidden overflow-hidden bg-white border-t border-gray-100"
               >
                 <div className="py-4 space-y-1">
-                  <MobileNavLink to="/#features">Features</MobileNavLink>
-                  <MobileNavLink to="/#pricing">Pricing</MobileNavLink>
-                  <MobileNavLink to="/#solutions">Solutions</MobileNavLink>
-                  <MobileNavLink to="/#demo">Demo</MobileNavLink>
-                  <MobileNavLink to="/#how-it-works">About</MobileNavLink>
+                  {currentUser ? (
+                    <>
+                      <MobileNavLink to="/dashboard">Dashboard</MobileNavLink>
+                      {(currentUser.userType === 'Brand' || currentUser.userType === 'Agency') && (
+                        <MobileNavLink to="/campaigns/create">Create Campaign</MobileNavLink>
+                      )}
+                      {currentUser.userType === 'Creator' && (
+                        <MobileNavLink to={`/creators/${currentUser._id}`}>My Profile</MobileNavLink>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <MobileNavLink to="/#features">Features</MobileNavLink>
+                      <MobileNavLink to="/#pricing">Pricing</MobileNavLink>
+                      <MobileNavLink to="/#solutions">Solutions</MobileNavLink>
+                      <MobileNavLink to="/#demo">Demo</MobileNavLink>
+                      <MobileNavLink to="/#how-it-works">About</MobileNavLink>
+                    </>
+                  )}
                   
                   {currentUser ? (
                     // Mobile User Profile Section
