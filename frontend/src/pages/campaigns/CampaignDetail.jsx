@@ -203,13 +203,16 @@ export default function CampaignDetail() {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {currentCampaign.assignedCreators.map((assignment) => (
                                     <div key={assignment.creatorId._id} className="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors relative">
-                                        <button
-                                            onClick={() => handleRemoveCreator(assignment.creatorId._id)}
-                                            className="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-600 transition-colors"
-                                            title="Remove creator"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </button>
+                                        {isBrandOrAgency && (
+                                            <button
+                                                onClick={() => handleRemoveCreator(assignment.creatorId._id)}
+                                                disabled={removingCreator === assignment.creatorId._id}
+                                                className="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50"
+                                                title="Remove creator"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        )}
                                         <div className="flex items-center gap-3 mb-2">
                                             <img
                                                 src={assignment.creatorId.profilePicture}

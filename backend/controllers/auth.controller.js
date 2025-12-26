@@ -23,9 +23,12 @@ export const signup = async (req , res , next) => {
 
     const hashedPassword = bcryptjs.hashSync(password , 10);
 
+    // Normalize email (trim whitespace and convert to lowercase) to match invitation format
+    const normalizedEmail = email.trim().toLowerCase();
+
     const newUser = new User({
         username,
-        email,
+        email: normalizedEmail,
         password : hashedPassword,
         userType,
     });
@@ -37,7 +40,7 @@ export const signup = async (req , res , next) => {
         // Don't auto-assign - creator must accept invitation explicitly
         // Just track that they have pending invitations
         const pendingInvitations = await Invitation.find({
-            email: email.toLowerCase(),
+            email: normalizedEmail,
             status: 'Pending'
         }).populate('campaignId');
 
@@ -98,7 +101,12 @@ export const signin = async (req, res, next) => {
     }
 
     try {
-        const validUser = await User.findOne({ email });
+        // Normalize email for lookup (case-insensitive)
+        const normalizedEmail = email.trim().toLowerCase();
+        // Try to find user with case-insensitive email match
+        const validUser = await User.findOne({ 
+            email: { $regex: new RegExp(`^${normalizedEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
+        });
 
         if (!validUser) {
             return next(errorHandler(404, 'Invalid credentials!'));

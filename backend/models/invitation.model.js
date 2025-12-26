@@ -68,7 +68,18 @@ invitationSchema.statics.createInvitation = async function(email, campaignId, in
 
 // Method to check if invitation is valid
 invitationSchema.methods.isValid = function() {
-    return this.status === 'Pending' && new Date() < this.expiresAt;
+    // Check if status is Pending
+    if (this.status !== 'Pending') {
+        return false;
+    }
+    // Check if expiration date exists and is in the future
+    if (!this.expiresAt) {
+        return false;
+    }
+    // Compare dates properly - ensure expiresAt is a Date object
+    const now = new Date();
+    const expiresAt = this.expiresAt instanceof Date ? this.expiresAt : new Date(this.expiresAt);
+    return now < expiresAt;
 };
 
 const Invitation = mongoose.model('Invitation', invitationSchema);

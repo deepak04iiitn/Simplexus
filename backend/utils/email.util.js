@@ -322,7 +322,7 @@ export const sendExternalCreatorInvitationEmail = async (email, campaignName, br
 
         const mailOptions = {
             from: {
-                name: 'Simplexus',
+                name: 'Simplexus', 
                 address: process.env.EMAIL_USER
             },
             to: email,

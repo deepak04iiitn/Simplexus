@@ -254,14 +254,53 @@ export const acceptInvitation = async (req, res, next) => {
             return next(errorHandler(404, 'Invitation not found'));
         }
 
+        // Check if invitation is already accepted
+        if (invitation.status === 'Accepted') {
+            // Check if creator is already assigned
+            const campaign = await Campaign.findById(invitation.campaignId);
+            if (campaign && campaign.assignedCreators.some(c => c.creatorId.toString() === userId)) {
+                return res.status(200).json({ 
+                    success: true, 
+                    message: 'Invitation already accepted',
+                    campaign: campaign._id
+                });
+            }
+        }
+        
         if (!invitation.isValid()) {
+            // Update status to Expired if it's past expiration
+            if (invitation.status === 'Pending' && invitation.expiresAt && new Date() >= new Date(invitation.expiresAt)) {
+                invitation.status = 'Expired';
+                await invitation.save();
+            }
             return next(errorHandler(400, 'Invitation has expired or is no longer valid'));
         }
 
         // Verify the user's email matches the invitation
         const user = await User.findById(userId);
-        if (user.email.toLowerCase() !== invitation.email.toLowerCase()) {
-            return next(errorHandler(403, 'This invitation is not for your account'));
+        if (!user) {
+            return next(errorHandler(404, 'User not found'));
+        }
+
+        if (!user.email) {
+            return next(errorHandler(400, 'User email is missing'));
+        }
+
+        // Normalize both emails (trim whitespace and convert to lowercase) for comparison
+        const normalizedUserEmail = user.email.trim().toLowerCase();
+        const normalizedInvitationEmail = invitation.email ? invitation.email.trim().toLowerCase() : '';
+        
+        // Debug logging (remove in production if needed)
+        console.log('Email comparison:', {
+            userEmail: user.email,
+            normalizedUserEmail,
+            invitationEmail: invitation.email,
+            normalizedInvitationEmail,
+            match: normalizedUserEmail === normalizedInvitationEmail
+        });
+
+        if (normalizedUserEmail !== normalizedInvitationEmail) {
+            return next(errorHandler(403, 'This invitation is not for your account. Please ensure you are logged in with the email address that received the invitation.'));
         }
 
         const campaign = await Campaign.findById(invitation.campaignId);
@@ -442,7 +481,13 @@ export const getCampaignByInvitation = async (req, res, next) => {
             return next(errorHandler(404, 'Invitation not found'));
         }
 
+        // Check if invitation is valid
         if (!invitation.isValid()) {
+            // Update status to Expired if it's past expiration
+            if (invitation.status === 'Pending' && invitation.expiresAt && new Date() >= new Date(invitation.expiresAt)) {
+                invitation.status = 'Expired';
+                await invitation.save();
+            }
             return next(errorHandler(400, 'Invitation has expired or is no longer valid'));
         }
 

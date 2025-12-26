@@ -62,16 +62,42 @@ export const getProfile = async (req, res, next) => {
         const { userId } = req.params;
         const currentUserId = req.user?.id;
 
-        const profile = await CreatorProfile.findOne({ userId })
+        // Verify the user exists and is a Creator
+        const user = await User.findById(userId);
+        if (!user) {
+            return next(errorHandler(404, 'User not found'));
+        }
+
+        if (user.userType !== 'Creator') {
+            return next(errorHandler(400, 'User is not a creator'));
+        }
+
+        let profile = await CreatorProfile.findOne({ userId })
             .populate('userId', 'username email profilePicture userType')
             .populate('testimonials.fromUserId', 'username email profilePicture');
+
+        // If profile doesn't exist and user is viewing their own profile, create a basic one
+        if (!profile && userId === currentUserId) {
+            profile = new CreatorProfile({
+                userId,
+                bio: '',
+                location: {},
+                niche: [],
+                platforms: [],
+                portfolio: [],
+                pricing: { packages: [] },
+                publicProfileEnabled: true,
+            });
+            await profile.save();
+            await profile.populate('userId', 'username email profilePicture userType');
+        }
 
         if (!profile) {
             return next(errorHandler(404, 'Profile not found'));
         }
 
         // Check if profile is public or user is viewing their own
-        if (!profile.publicProfileEnabled && userId !== currentUserId) {
+        if (!profile.publicProfileEnabled && userId !== currentUserId?.toString()) {
             return next(errorHandler(403, 'Profile is private'));
         }
 
