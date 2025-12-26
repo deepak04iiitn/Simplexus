@@ -20,10 +20,11 @@ export const createReview = async (req, res, next) => {
 
         // Check permissions - only brand/agency team members can review
         const isOwner = campaign.brandId.toString() === userId;
+        const isAgency = campaign.agencyId && campaign.agencyId.toString() === userId;
         const isTeamMember = campaign.teamMembers.some(m => m.userId.toString() === userId);
 
-        if (!isOwner && !isTeamMember) {
-            return next(errorHandler(403, 'Only brand and team members can create reviews'));
+        if (!isOwner && !isAgency && !isTeamMember) {
+            return next(errorHandler(403, 'Only brand, agency, and team members can create reviews'));
         }
 
         const review = new Review({

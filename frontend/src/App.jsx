@@ -15,6 +15,7 @@ import CreateCampaign from './pages/campaigns/CreateCampaign'
 import CampaignDetail from './pages/campaigns/CampaignDetail'
 import BriefBuilder from './pages/campaigns/BriefBuilder'
 import DeliverableDetail from './pages/deliverables/DeliverableDetail'
+import CreateDeliverable from './pages/deliverables/CreateDeliverable'
 import ReviewDeliverable from './pages/reviews/ReviewDeliverable'
 import PaymentManagement from './pages/payments/PaymentManagement'
 import ReportGeneration from './pages/reports/ReportGeneration'
@@ -24,6 +25,7 @@ import ClientPortal from './pages/agencies/ClientPortal'
 import CreatorSearch from './pages/creators/CreatorSearch'
 import AssignCreators from './pages/campaigns/AssignCreators'
 import CreatorPrivateDashboard from './pages/campaigns/CreatorPrivateDashboard'
+import CollaborationDashboard from './pages/collaboration/CollaborationDashboard'
 
 function AppContent() {
   const location = useLocation();
@@ -72,6 +74,7 @@ function AppContent() {
             <Route path='/invite/:token' element={<CreatorPrivateDashboard />} />
             <Route path='/deliverables/:id' element={<DeliverableDetail />} />
             <Route path='/deliverables/:id/review' element={<ReviewDeliverable />} />
+            <Route path='/campaigns/:id/deliverables/create' element={<CreateDeliverable />} />
             <Route path='/campaigns/:campaignId/payments' element={<PaymentManagement />} />
             <Route path='/campaigns/:campaignId/reports' element={<ReportGeneration />} />
             <Route path='/creators/:userId' element={<CreatorProfile />} />
@@ -79,6 +82,7 @@ function AppContent() {
             <Route path='/creator-profiles/search/creators' element={<CreatorSearch />} />
             <Route path='/campaigns/:id/team' element={<TeamCollaboration />} />
             <Route path='/campaigns/:campaignId/portal' element={<ClientPortal />} />
+            <Route path='/collaboration/:campaignId/:creatorId?' element={<CollaborationDashboard />} />
           </Routes>
         </div>
         {!isPrivateDashboard && <Footer />}

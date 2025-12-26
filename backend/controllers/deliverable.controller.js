@@ -15,12 +15,13 @@ export const createDeliverable = async (req, res, next) => {
 
         // Check permissions
         const isOwner = campaign.brandId.toString() === userId;
+        const isAgency = campaign.agencyId && campaign.agencyId.toString() === userId;
         const isAdmin = campaign.teamMembers.some(
             m => m.userId.toString() === userId && ['Owner', 'Admin'].includes(m.role)
         );
 
-        if (!isOwner && !isAdmin) {
-            return next(errorHandler(403, 'Only owners and admins can create deliverables'));
+        if (!isOwner && !isAgency && !isAdmin) {
+            return next(errorHandler(403, 'Only owners, agencies, and admins can create deliverables'));
         }
 
         const deliverable = new Deliverable({

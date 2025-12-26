@@ -14,6 +14,7 @@ import paymentRoutes from './routes/payment.route.js';
 import reportRoutes from './routes/report.route.js';
 import creatorProfileRoutes from './routes/creatorProfile.route.js';
 import ratingRoutes from './routes/rating.route.js';
+import collaborationRoutes from './routes/collaboration.route.js';
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use('/backend/payments', paymentRoutes);
 app.use('/backend/reports', reportRoutes);
 app.use('/backend/creator-profiles', creatorProfileRoutes);
 app.use('/backend/ratings', ratingRoutes);
+app.use('/backend/collaboration', collaborationRoutes);
 
 app.get('/backend/ping', (req, res) => {
   res.status(200).send('pong');

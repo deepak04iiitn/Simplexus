@@ -4,7 +4,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getCampaign } from '../../redux/campaign/campaignSlice';
 import { getBrief } from '../../redux/brief/briefSlice';
 import { getDeliverables } from '../../redux/deliverable/deliverableSlice';
-import { FileText, Users, Calendar, Plus, CheckCircle2, Clock, XCircle, ArrowLeft, Eye, DollarSign, BarChart3, Users2, Building2, UserPlus, Mail, X } from 'lucide-react';
+import { FileText, Users, Calendar, Plus, CheckCircle2, Clock, XCircle, ArrowLeft, Eye, DollarSign, BarChart3, Users2, Building2, UserPlus, Mail, X, MessageSquare } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function CampaignDetail() {
@@ -149,17 +149,28 @@ export default function CampaignDetail() {
                                 <p className="text-gray-600 mb-4">
                                     Before you can proceed with this campaign, please read the brief carefully and acknowledge that you understand the requirements.
                                 </p>
-                                <Link
-                                    to={`/campaigns/${id}/brief`}
-                                    className="inline-block bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
-                                >
-                                    Read Brief & Acknowledge
-                                </Link>
+                                <div className="flex gap-3">
+                                    <Link
+                                        to={`/campaigns/${id}/brief`}
+                                        className="inline-block bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+                                    >
+                                        Read Brief & Acknowledge
+                                    </Link>
+                                </div>
                             </div>
                         ) : (
-                            <div className="flex items-center gap-2 text-green-600">
-                                <CheckCircle2 className="w-5 h-5" />
-                                <span>Brief acknowledged on {new Date(creatorAssignment.acknowledgedAt).toLocaleDateString()}</span>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-green-600">
+                                    <CheckCircle2 className="w-5 h-5" />
+                                    <span>Brief acknowledged on {new Date(creatorAssignment.acknowledgedAt).toLocaleDateString()}</span>
+                                </div>
+                                <Link
+                                    to={`/collaboration/${id}`}
+                                    className="flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+                                >
+                                    <MessageSquare className="w-4 h-4" />
+                                    Open Collaboration Centre
+                                </Link>
                             </div>
                         )}
                     </div>
@@ -248,6 +259,15 @@ export default function CampaignDetail() {
                                                 </span>
                                             )}
                                         </div>
+                                        {isBrandOrAgency && (
+                                            <Link
+                                                to={`/collaboration/${id}/${assignment.creatorId._id}`}
+                                                className="mt-3 w-full flex items-center justify-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
+                                            >
+                                                <MessageSquare className="w-4 h-4" />
+                                                Open Collaboration
+                                            </Link>
+                                        )}
                                     </div>
                                 ))}
                             </div>
